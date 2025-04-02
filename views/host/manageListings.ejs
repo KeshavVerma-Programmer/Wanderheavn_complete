@@ -1,0 +1,105 @@
+<% layout("/layouts/boilerplate") %>
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-uppercase fw-bold">Manage Your Listings</h2>
+
+    <!-- Search & Filter Section -->
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <input
+            type="text"
+            id="listingSearch"
+            class="form-control w-50"
+            placeholder="Search by Title or Location"
+        />
+
+        <select id="statusFilter" class="form-select w-25">
+            <option value="all">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Pending">Pending</option>
+            <option value="Inactive">Inactive</option>
+        </select>
+    </div>
+
+    <% if(listings.length > 0) { %>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Price (&#8377;)</th>
+                        <th>Status</th>
+                        <th>Date Added</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="listingTableBody">
+                    <% listings.forEach(listing => { %>
+                        <tr>
+                            <td><%= listing.title %></td>
+                            <td><%= listing.location %></td>
+                            <td><%= listing.price.toLocaleString("en-IN") %></td>
+                            <td>
+                                <span class="badge 
+                                    <%= listing.status === 'Active' ? 'bg-success' 
+                                    : listing.status === 'Pending' ? 'bg-warning' 
+                                    : 'bg-danger' %>">
+                                    <i class="<%= listing.status === 'Active' ? 'fas fa-check-circle' 
+                                        : listing.status === 'Pending' ? 'fas fa-hourglass-half' 
+                                        : 'fas fa-times-circle' %>">
+                                    </i>
+                                    <%= listing.status %>
+                                </span>
+                            </td>
+                            <td><%= new Date(listing.createdAt).toLocaleDateString('en-IN') %></td>
+                            <td>
+                                <a href="/host/listings/<%= listing._id %>" 
+                                   class="btn btn-sm btn-info me-1">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="/host/listings/<%= listing._id %>/edit" 
+                                   class="btn btn-sm btn-warning me-1">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form action="/host/listings/<%= listing._id %>?_method=DELETE" method="POST"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Are you sure you want to delete this listing?');">
+                                  <button class="btn btn-sm btn-danger">
+                                      <i class="fas fa-trash"></i> Delete
+                                  </button>
+                              </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <p class="text-center text-warning">
+            No listings available. <a href="/host/listings/new">Add one now</a>.
+        </p>
+    <% } %>
+</div>
+<br><br>
+<a href="/host/dashboard" class="btn btn-secondary">Back</a>
+<script>
+    // Search & Filter Functionality
+    document.getElementById("listingSearch").addEventListener("input", filterListings);
+    document.getElementById("statusFilter").addEventListener("change", filterListings);
+
+    function filterListings() {
+        const searchValue = document.getElementById("listingSearch").value.toLowerCase();
+        const statusFilter = document.getElementById("statusFilter").value.toLowerCase();
+        const rows = document.querySelectorAll("#listingTableBody tr");
+
+        rows.forEach(row => {
+            const title = row.children[0].textContent.toLowerCase();
+            const location = row.children[1].textContent.toLowerCase();
+            const status = row.children[3].textContent.toLowerCase();
+
+            const matchesSearch = title.includes(searchValue) || location.includes(searchValue);
+            const matchesStatus = statusFilter === "all" || status === statusFilter;
+
+            row.style.display = matchesSearch && matchesStatus ? "" : "none";
+        });
+    }
+</script>

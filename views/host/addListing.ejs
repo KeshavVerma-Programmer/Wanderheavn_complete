@@ -1,0 +1,171 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <h3>Create a New Listing</h3>
+    <form id="listingForm" method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+      
+      <!-- Title -->
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input id="title" name="listing[title]" placeholder="Enter title" type="text" class="form-control" minlength="5" maxlength="100" required/>
+        <div class="invalid-feedback">Title must be between 5 and 100 characters.</div>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" name="listing[description]" class="form-control" minlength="10" maxlength="500" required></textarea>
+        <div class="invalid-feedback">Description must be between 10 and 500 characters.</div>
+      </div>
+
+      <!-- Category -->
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select id="category" name="listing[category]" class="form-select" required>
+          <option value="" disabled selected>Select a category</option>
+          <option value="apartment">🏢 Apartment</option>
+          <option value="villa">🏡 Villa</option>
+          <option value="cabin">🏕️ Cabin</option>
+          <option value="bungalow">🏠 Bungalow</option>
+          <option value="resort">🏖️ Resort</option>
+          <option value="camping">⛺ Camping</option>
+        </select>
+        <div class="invalid-feedback">Please select a valid category.</div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload Listing Image</label>
+        <input id="image" name="listing[images]" type="file" class="form-control" accept="image/*" required />
+        <div class="invalid-feedback">Please upload at least one image.</div>
+      </div>
+
+      <div class="row">
+        <!-- Price -->
+        <div class="mb-3 col-md-4">
+          <label for="price" class="form-label">Price</label>
+          <input id="price" name="listing[price]" placeholder="1200" class="form-control" type="number" min="0" required/>
+          <div class="invalid-feedback">Price must be a positive number.</div>
+        </div>
+
+        <!-- Country -->
+        <div class="mb-3 col-md-8">
+          <label for="country" class="form-label">Country</label>
+          <input id="country" name="listing[country]" placeholder="India" type="text" class="form-control" required/>
+          <div class="invalid-feedback">Please enter a valid country name.</div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input id="location" name="listing[location]" placeholder="Jaipur, Rajasthan" type="text" class="form-control" required />
+        <div class="invalid-feedback">Please enter a valid location.</div>
+
+        <!-- Hidden input fields to store coordinates -->
+        <input type="hidden" name="listing[geometry][type]" value="Point">
+        <input type="hidden" id="latitude" name="listing[geometry][coordinates][1]">
+        <input type="hidden" id="longitude" name="listing[geometry][coordinates][0]">
+      </div>
+
+      <div class="row">
+        <!-- Check-in Time -->
+        <div class="mb-3 col-md-6">
+          <label for="checkInTime" class="form-label"><i class="bi bi-door-open"></i> Check-in Time</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-clock"></i></span>
+            <input id="checkInTime" name="listing[checkInTime]" type="text" class="form-control" placeholder="11:30:PM" required />
+          </div>
+          <div class="invalid-feedback">Please select a check-in time.</div>
+        </div>
+      
+        <!-- Check-out Time -->
+        <div class="mb-3 col-md-6">
+          <label for="checkOutTime" class="form-label"><i class="bi bi-door-closed"></i> Check-out Time</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-clock-history"></i></span>
+            <input id="checkOutTime" name="listing[checkOutTime]" type="text" class="form-control" placeholder="12:30:AM" required />
+          </div>
+          <div class="invalid-feedback">Please select a check-out time.</div>
+        </div>
+      </div>
+
+      <button id="addListingBtn" type="submit" class="btn btn-dark add-btn mt-3">
+        Add
+        <span id="listingSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+    </button>
+
+    </form>
+    <br><br>
+    <a href="/host/dashboard" class="btn btn-secondary">Back</a>
+  </div>
+</div>
+
+<script>
+  // Custom validation for Bootstrap
+  document.getElementById("listingForm").addEventListener("submit", function(event) {
+    const form = event.target;
+    const addListingBtn = document.getElementById("addListingBtn");
+    const listingSpinner = document.getElementById("listingSpinner");
+
+    if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+    } else {
+        // Disable button and show spinner
+        addListingBtn.disabled = true;
+        listingSpinner.classList.remove("d-none");
+
+        // Allow the form to submit naturally (removes duplicate issue)
+        return;
+    }
+
+    form.classList.add("was-validated");
+});
+
+  document.getElementById("title").addEventListener("input", function () {
+    const title = this.value.trim();
+    if (title.length < 5 || title.length > 100) {
+      this.setCustomValidity("Title must be between 5 and 100 characters.");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+
+  // Image validation (at least one file should be selected)
+  document.getElementById("image").addEventListener("change", function() {
+    if (this.files.length === 0) {
+      this.setCustomValidity("Please upload at least one image.");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+
+  // Fetch Coordinates from MapTiler API
+  document.getElementById("location").addEventListener("change", async function () {
+      const location = this.value;
+      const mapToken = "6Z8EerHHhFtWsqh3cfqv"; // Replace with your actual MapTiler API key
+      const geoUrl = `https://api.maptiler.com/geocoding/${encodeURIComponent(location)}.json?key=${mapToken}`;
+
+      try {
+          const response = await fetch(geoUrl);
+          const data = await response.json();
+
+          if (data.features && data.features.length > 0) {
+              const [longitude, latitude] = data.features[0].geometry.coordinates;
+              
+              // Set hidden inputs
+              document.getElementById("latitude").value = latitude;
+              document.getElementById("longitude").value = longitude;
+              console.log(`📍 Updated Coordinates: Latitude = ${latitude}, Longitude = ${longitude}`);
+          } else {
+              alert("Could not fetch coordinates. Try another location.");
+          }
+      } catch (error) {
+          console.error("❌ Error fetching coordinates:", error);
+          alert("Failed to fetch coordinates. Check your internet connection or API key.");
+      }
+  });
+</script>
+

@@ -1,0 +1,135 @@
+<% layout("/layouts/boilerplate") %>
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <h3>Edit Listing</h3>
+    <form method="POST" action="/admin/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
+      
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input id="title" name="listing[title]" type="text" class="form-control" value="<%= listing.title %>" required />
+        <div class="valid-feedback">Title looks good!</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" name="listing[description]" class="form-control" required><%= listing.description %></textarea>
+        <div class="invalid-feedback">Please enter a short description</div>
+      </div>
+
+      <!-- Category Field -->
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select id="category" name="listing[category]" class="form-select" required>
+          <option value="apartment" <%= listing.category === "apartment" ? "selected" : "" %>>🏢 Apartment</option>
+          <option value="villa" <%= listing.category === "villa" ? "selected" : "" %>>🏡 Villa</option>
+          <option value="cabin" <%= listing.category === "cabin" ? "selected" : "" %>>🏕️ Cabin</option>
+          <option value="bungalow" <%= listing.category === "bungalow" ? "selected" : "" %>>🏠 Bungalow</option>
+          <option value="resort" <%= listing.category === "resort" ? "selected" : "" %>>🏖️ Resort</option>
+          <option value="camping" <%= listing.category === "camping" ? "selected" : "" %>>⛺ Camping</option>
+        </select>
+        <div class="invalid-feedback">Please select a category</div>
+      </div>
+
+   <!-- Existing Images -->
+<div class="mb-3">
+  <label class="form-label">Current Images</label><br>
+  <% if (listing.images && listing.images.length > 0) { %>
+    <% listing.images.forEach(image => { %>
+      <img src="<%= image.url %>" alt="Listing Image" class="img-thumbnail mb-2" width="200px">
+    <% }) %>
+  <% } else { %>
+    <p>No images uploaded.</p>
+  <% } %>
+</div>
+      <!-- Upload New Image -->
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload New Image</label>
+        <input id="image" name="listing[images]" type="file" class="form-control" />
+      </div>
+
+      <div class="row">
+        <div class="mb-3 col-md-4">
+          <label for="price" class="form-label">Price</label>
+          <input id="price" name="listing[price]" type="number" class="form-control" value="<%= listing.price %>" required />
+          <div class="invalid-feedback">Price should be valid</div>
+        </div>
+
+        <div class="mb-3 col-md-8">
+          <label for="country" class="form-label">Country</label>
+          <input id="country" name="listing[country]" type="text" class="form-control" value="<%= listing.country %>" required />
+          <div class="invalid-feedback">Country name should be valid</div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input id="location" name="listing[location]" type="text" class="form-control" value="<%= listing.location %>" required />
+        <div class="invalid-feedback">Location should be valid</div>
+    
+        <!-- Hidden input fields for coordinates -->
+        <input type="hidden" name="listing[geometry][type]" value="Point">
+        <input type="hidden" id="latitude" name="listing[geometry][coordinates][1]" value="<%= listing.geometry.coordinates[1] %>">
+        <input type="hidden" id="longitude" name="listing[geometry][coordinates][0]" value="<%= listing.geometry.coordinates[0] %>">
+      </div>
+
+      <div class="row">
+        <!-- Check-in Time -->
+        <div class="mb-3 col-md-6">
+          <label for="checkInTime" class="form-label"><i class="bi bi-door-open"></i> Check-in Time</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-clock"></i></span>
+            <input id="checkInTime" name="listing[checkInTime]" type="text" class="form-control" value="<%= listing.checkInTime %>" required />
+          </div>
+          <div class="invalid-feedback">Please select a check-in time.</div>
+        </div>
+      
+        <!-- Check-out Time -->
+        <div class="mb-3 col-md-6">
+          <label for="checkOutTime" class="form-label"><i class="bi bi-door-closed"></i> Check-out Time</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-clock-history"></i></span>
+            <input id="checkOutTime" name="listing[checkOutTime]" type="text" class="form-control" value="<%= listing.checkOutTime %>" required />
+          </div>
+          <div class="invalid-feedback">Please select a check-out time.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="status" class="form-label">Status</label>
+        <select class="form-select" id="status" name="listing[status]">
+            <option value="Active" <%= listing.status === 'Active' ? 'selected' : '' %>>Active</option>
+            <option value="Pending" <%= listing.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+            <option value="Already Booked" <%= listing.status === 'Already Booked' ? 'selected' : '' %>>Already Booked</option>
+        </select>
+    </div>
+      <button type="submit" class="btn btn-success mt-3">Save Changes</button>
+      <a href="/admin/manage-listings" class="btn btn-secondary mt-3">Cancel</a>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById("location").addEventListener("change", async function () {
+      const location = this.value;
+      const mapToken = "6Z8EerHHhFtWsqh3cfqv"; // Replace with your actual MapTiler API key
+      const geoUrl = `https://api.maptiler.com/geocoding/${encodeURIComponent(location)}.json?key=${mapToken}`;
+
+      try {
+          const response = await fetch(geoUrl);
+          const data = await response.json();
+
+          if (data.features && data.features.length > 0) {
+              const [longitude, latitude] = data.features[0].geometry.coordinates;
+              
+              // Set hidden inputs
+              document.getElementById("latitude").value = latitude;
+              document.getElementById("longitude").value = longitude;
+              console.log(`📍 Updated Coordinates: Latitude = ${latitude}, Longitude = ${longitude}`);
+          } else {
+              alert("Could not fetch coordinates. Try another location.");
+          }
+      } catch (error) {
+          console.error("❌ Error fetching coordinates:", error);
+          alert("Failed to fetch coordinates. Check your internet connection or API key.");
+      }
+  });
+</script>

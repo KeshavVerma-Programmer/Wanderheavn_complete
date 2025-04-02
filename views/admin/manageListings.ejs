@@ -1,0 +1,101 @@
+<% layout("/layouts/boilerplate") %>
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-uppercase fw-bold text-warning">Manage Listings</h2>
+
+    <!-- Search Bar -->
+    <div class="row mb-3">
+        <div class="col-md-6 offset-md-3">
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="form-control" 
+                placeholder="Search listings by title, location, or host name..."
+            />
+        </div>
+    </div>
+
+    <% if(listings.length > 0) { %>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle" id="listingTable">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Price (&#8377;)</th>
+                        <th>Host Name</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% listings.forEach(listing => { %>
+                        <tr>
+                            <td>
+                                <%= listing.title %> 
+                                <% if (listing.isFeatured) { %>
+                                    <span class="badge bg-info ms-2">Featured</span>
+                                <% } %>
+                            </td>
+                            <td><%= listing.location %></td>
+                            <td><%= listing.price.toLocaleString("en-IN") %></td>
+                            <td><%= listing.owner ? listing.owner.username : 'Unknown' %></td>
+                            <td>
+                                <span class="badge 
+                                    <%= listing.status === 'Active' ? 'bg-success' 
+                                    : listing.status === 'Pending' ? 'bg-warning' 
+                                    : 'bg-danger' %>">
+                                    <%= listing.status %>
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <!-- View Listing -->
+                                <a href="/admin/listings/<%= listing._id %>" 
+                                   class="btn btn-sm btn-info me-1">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+
+                                <!-- Edit Listing -->
+                                <a href="/admin/listings/<%= listing._id %>/edit" 
+                                   class="btn btn-sm btn-primary me-1">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+
+                                <!-- Delete Listing (Confirmation) -->
+                                <a href="/admin/listings/<%= listing._id %>/delete" 
+                                   class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <div class="alert alert-info text-center">
+            No listings available.
+        </div>
+    <% } %>
+</div>
+<br><br>
+<a href="/admin/dashboard" class="btn btn-secondary">Back</a>
+<script>
+    // Search Filter Functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keyup', function() {
+        const filter = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll('#listingTable tbody tr');
+
+        rows.forEach(row => {
+            const title = row.cells[0].innerText.toLowerCase();
+            const location = row.cells[1].innerText.toLowerCase();
+            const host = row.cells[3].innerText.toLowerCase();
+
+            if (title.includes(filter) || location.includes(filter) || host.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+</script>

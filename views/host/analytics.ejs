@@ -1,0 +1,43 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-uppercase fw-bold">Host Analytics</h2>
+
+    <div class="row text-center g-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm p-3 bg-warning text-dark">
+                <h5 class="card-title">Most Booked Listing</h5>
+                <p class="fw-bold"><%= mostBookedListing %></p>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<a href="/host/dashboard" class="btn btn-secondary">Back</a>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById("earningsChart").getContext("2d");
+        const chartData = {
+            labels: <%= JSON.stringify(monthlyEarnings.map(e => `Month ${e._id}`)) %>,
+            datasets: [{
+                label: "Earnings (₹)",
+                data: <%= JSON.stringify(monthlyEarnings.map(e => e.total)) %>,
+                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 2
+            }]
+        };
+
+        new Chart(ctx, {
+            type: "line",
+            data: chartData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>

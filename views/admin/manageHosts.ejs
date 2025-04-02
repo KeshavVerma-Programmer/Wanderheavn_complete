@@ -1,0 +1,88 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-uppercase fw-bold text-primary">Manage Hosts</h2>
+
+    <!-- Search Bar -->
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="form-control rounded-pill shadow-sm" 
+                placeholder="Search users by username or email..."
+            />
+        </div>
+    </div>
+
+    <% if(hosts.length > 0) { %>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered text-center" id="userTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% hosts.forEach(host => { %>
+                        <tr>
+                            <td class="fw-semibold"><%= host.username %></td>
+                            <td class="text-muted"><%= host.email %></td>
+                            <td>
+                                <span class="badge px-3 py-2 text-uppercase 
+                                    <%= host.role === 'admin' ? 'bg-primary' 
+                                    : host.role === 'host' ? 'bg-warning text-dark' 
+                                    : 'bg-secondary' %>">
+                                    <%= host.role %>
+                                </span>
+                            </td>
+                            <td>
+                                <form action="/admin/manage-hosts/<%= host._id %>/delete?_method=DELETE" 
+                                    method="POST" class="d-inline">
+                                  <button type="submit" 
+                                          class="btn btn-sm btn-danger delete-host px-3 py-1 fw-bold" 
+                                          data-username="<%= host.username %>">
+                                      Delete
+                                  </button>
+                              </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <p class="text-center text-muted">No Hosts available.</p>
+    <% } %>
+</div>
+<br><br>
+<a href="/admin/dashboard" class="btn btn-secondary">Back</a>
+<script>
+    // Search Filter Functionality
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        const filter = this.value.toLowerCase();
+        document.querySelectorAll('#userTable tbody tr').forEach(row => {
+            const username = row.cells[0].innerText.toLowerCase();
+            const email = row.cells[1].innerText.toLowerCase();
+            row.style.display = username.includes(filter) || email.includes(filter) ? "" : "none";
+        });
+    });
+
+    // Delete Confirmation
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-host").forEach((button) => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default form submission
+                
+                let username = this.getAttribute("data-username"); // Get the username
+                
+                if (confirm(`Are you sure you want to delete the user: "${username}"?`)) {
+                    this.closest("form").submit(); // Submit the correct form
+                }
+            });
+        });
+    });
+</script>

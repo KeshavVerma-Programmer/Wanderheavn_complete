@@ -1,0 +1,98 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-uppercase fw-bold text-success">Manage Users</h2>
+
+    <!-- Search Bar -->
+    <div class="row mb-3">
+        <div class="col-md-6 offset-md-3">
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="form-control" 
+                placeholder="Search users by username or email..."
+            />
+        </div>
+    </div>
+
+    <% if(users.length > 0) { %>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle" id="userTable">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user => { %>
+                        <tr>
+                            <td><%= user.username %></td>
+                            <td><%= user.email %></td>
+                            <td>
+                                <span class="badge px-3 py-2 text-uppercase 
+                                    <%= user.role === 'admin' ? 'bg-primary' 
+                                    : user.role === 'host' ? 'bg-warning text-dark' 
+                                    : 'bg-secondary' %>">
+                                    <%= user.role %>
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <!-- Delete User Button with Confirmation -->
+                                <button type="button" 
+                                        class="btn btn-sm btn-danger delete-user" 
+                                        data-user-id="<%= user._id %>" 
+                                        data-username="<%= user.username %>">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <div class="alert alert-info text-center">
+            No users available.
+        </div>
+    <% } %>
+</div>
+<br><br>
+<a href="/admin/dashboard" class="btn btn-secondary">Back</a>
+<script>
+    // Delete Confirmation
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-user").forEach((button) => {
+            button.addEventListener("click", function () {
+                let userId = this.getAttribute("data-user-id");
+                let username = this.getAttribute("data-username");
+                
+                if (confirm(`Are you sure you want to delete the user: "${username}"?`)) {
+                    fetch(`/admin/manage-users/${userId}/delete?_method=DELETE`, {
+                        method: "POST"
+                    }).then(response => location.reload());
+                }
+            });
+        });
+    });
+
+    // Search Filter Functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keyup', function() {
+        const filter = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll('#userTable tbody tr');
+
+        rows.forEach(row => {
+            const username = row.cells[0].innerText.toLowerCase();
+            const email = row.cells[1].innerText.toLowerCase();
+
+            if (username.includes(filter) || email.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+</script>

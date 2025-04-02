@@ -1,0 +1,112 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+    body {
+    opacity: 0;
+    animation: fadeIn 0.8s ease-in-out forwards;
+}
+
+/* Keyframes for Fade-In */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-uppercase fw-bold">Host Dashboard</h1>
+
+    <!-- Quick Stats Section -->
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 bg-primary text-white">
+                <h5 class="card-title">Total Listings</h5>
+                <p class="display-6 fw-bold"><%= totalListings || 0 %></p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 bg-success text-white">
+                <h5 class="card-title">Total Bookings</h5>
+                <p class="display-6 fw-bold"><%= activeBookings || 0 %></p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 bg-danger text-white">
+                <h5 class="card-title">Total Earnings (₹)</h5>
+                <p class="display-6 fw-bold">&#8377;<%= totalEarnings || 0 %></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="row mt-4">
+        <!-- Add New Listing -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-3 border-warning">
+                <h5 class="card-title">
+                    <i class="fas fa-plus-circle text-warning"></i> Add New Listing
+                </h5>
+                <p class="card-text">Create and showcase your property for potential guests.</p>
+                <a href="/host/listings/new" class="btn btn-warning w-100">Add Listing</a>
+            </div>
+        </div>
+
+        <!-- Manage Bookings -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-3 border-success">
+                <h5 class="card-title">
+                    <i class="fas fa-calendar-check text-success"></i> Manage Bookings
+                </h5>
+                <p class="card-text">View, accept, or decline booking requests for your properties.</p>
+                <a href="/host/manage-bookings" class="btn btn-success w-100">Manage Bookings</a>
+            </div>
+        </div>
+
+        <!-- View Listings -->
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 mb-3 border-warning">
+                <h5 class="card-title">
+                    <i class="fas fa-list text-warning"></i> View My Listings
+                </h5>
+                <p class="card-text">Track and manage,edit,delete all your active property listings.</p>
+                <a href="/host/manage-listings" class="btn btn-warning w-100">View Listings</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="row mt-4">
+        <div class="col-12 border-info">
+            <div class="card shadow-sm p-3 border-info">
+                <h5 class="card-title">
+                    <i class="fas fa-chart-line text-info"></i> Analytics Overview
+                </h5>
+                <p>Track your booking statistics, revenue insights, and customer reviews.</p>
+                <a href="/host/analytics" class="btn btn-info w-100">View Analytics</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Subtle Hover Animations
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('shadow-lg');
+        });
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('shadow-lg');
+        });
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+    document.body.style.opacity = "1";
+    document.body.style.transition = "opacity 0.8s ease-in-out";
+});
+</script>

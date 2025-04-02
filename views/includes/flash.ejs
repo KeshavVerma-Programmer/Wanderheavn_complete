@@ -1,0 +1,65 @@
+<% if (typeof success !== "undefined" && success.length) { %>
+    <div class="alert alert-success alert-dismissible fade show col-6 offset-3 d-flex align-items-center" 
+         role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <%= success %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let successMessage = "<%= success %>";
+
+            if (successMessage && 'speechSynthesis' in window) {
+                speechSynthesis.cancel(); // Prevent overlapping speech
+
+                let utterance = new SpeechSynthesisUtterance(successMessage);
+                utterance.lang = "en-US";
+                utterance.rate = 1; // Normal speed
+                utterance.volume = 1; // Full volume
+                utterance.pitch = 1.1; // Slightly soft tone
+
+                function setVoice() {
+                    let voices = speechSynthesis.getVoices();
+                    let googleVoice = voices.find(voice =>
+                        voice.name.includes("Google") && voice.lang.includes("en")
+                    );
+
+                    if (googleVoice) {
+                        utterance.voice = googleVoice;
+                    } else {
+                        utterance.voice = voices[0]; // Fallback voice
+                    }
+                    speechSynthesis.speak(utterance);
+                }
+
+                if (speechSynthesis.getVoices().length > 0) {
+                    setVoice();
+                } else {
+                    speechSynthesis.onvoiceschanged = setVoice;
+                }
+            }
+        });
+    </script>
+<% } %>
+
+<% if (typeof error !== "undefined" && error.length) { %>
+    <div class="alert alert-danger alert-dismissible fade show col-6 offset-3 d-flex align-items-center" 
+         role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <%= error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>
+
+<script>
+    // Auto-dismiss alerts after 3 seconds
+    document.addEventListener("DOMContentLoaded", function () {
+        const alerts = document.querySelectorAll(".alert");
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.remove("show");
+                alert.classList.add("fade");
+            }, 3000); // Auto-dismiss after 3 seconds
+        });
+    });
+</script>

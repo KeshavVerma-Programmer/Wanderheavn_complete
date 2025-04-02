@@ -1,0 +1,15 @@
+<% layout("/layouts/boilerplate") %>
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-uppercase fw-bold">Listing Details</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <h4><%= listing.title %></h4>
+            <p><strong>Location:</strong> <%= listing.location %></p>
+            <p><strong>Price:</strong> ₹<%= listing.price.toLocaleString("en-IN") %></p>
+            <p><strong>Host:</strong> <%= listing.owner ? listing.owner.username : 'Unknown' %></p>
+            <p><strong>Status:</strong> <%= listing.status %></p>
+            <a href="/admin/manage-listings" class="btn btn-secondary">Back to Listings</a>
+        </div>
+    </div>
+</div>

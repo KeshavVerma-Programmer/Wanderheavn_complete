@@ -1,0 +1,149 @@
+<% layout("/layouts/boilerplate") %>
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
+  <style>
+    .listing-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .owner-info {
+      font-style: italic;
+      color: #555;
+    }
+    .starability-slot label {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .listing-image {
+      width: 50%;
+      height: auto;
+      max-height: 400px;
+      object-fit: 3/2;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<script>
+  const mapToken = "<%= process.env.MAP_TOKEN %>";
+  const listing = <%- JSON.stringify(listing) %>;
+</script>
+<script type="module" src="/js/map.js"></script>
+
+<div class="container mt-4 listing-container">
+  <h2><%= listing.title %></h2>
+  <img src="<%= listing.images.length > 0 ? listing.images[0].url : '/default-image.jpg' %>" class="listing-image" alt="Listing Image">
+  
+  <div class="mt-3">
+    <p class="owner-info">Owned by <em><%= listing.owner ? listing.owner.username || "Unknown Owner" : "Owner information missing" %></em></p>
+    <p><strong>Category - </strong> <%= listing.category %></p>
+    <p><strong>Description - </strong> <%= listing.description %></p>
+    <p><strong>Price - </strong> &#8377; <%= listing.price.toLocaleString("en-IN") %></p>
+    <p><strong>Location - </strong> <%= listing.location %>, <%= listing.country %></p>
+    <p><strong>Check-in - </strong> <%= listing.formattedCheckInTime %> | <strong>Check-out:</strong> <%= listing.formattedCheckOutTime %></p>
+    <p><strong>Status - </strong> <%= listing.status %></p>
+  </div>
+  <% if (currUser && currUser.role === 'host' && listing.owner && listing.owner._id.toString() === currUser._id.toString()) { %>
+    <a href="/host/listings/<%= listing._id %>/edit" class="btn btn-warning">Edit</a>
+    <form action="/host/listings/<%= listing._id %>?_method=DELETE" method="POST" class="d-inline">
+      <button class="btn btn-danger">Delete</button>
+    </form>
+  <% } %>
+  
+    <br><br>
+  <h4>Leave a Review</h4>
+  <% if (currUser && currUser.role === 'user') { %> 
+    <form action="/listings/<%= listing._id %>/reviews" method="POST">
+      <label>Rating:</label>
+      <div class="starability-slot">
+        <input type="radio" id="rate1" name="review[rating]" value="1" checked><label for="rate1">★</label> <!-- Default -->
+        <input type="radio" id="rate2" name="review[rating]" value="2"><label for="rate2">★★</label>
+        <input type="radio" id="rate3" name="review[rating]" value="3"><label for="rate3">★★★</label>
+        <input type="radio" id="rate4" name="review[rating]" value="4"><label for="rate4">★★★★</label>
+        <input type="radio" id="rate5" name="review[rating]" value="5"><label for="rate5">★★★★★</label>
+      </div>
+      <label>Comment:</label>
+      <textarea name="review[comment]" class="form-control" required></textarea>
+      <button class="btn btn-outline-dark mt-2">Submit</button>
+    </form>
+  <% } else if (currUser && (currUser.role === 'host' || currUser.role === 'admin')) { %>
+  <p class="text-muted">Only users can submit reviews.</p>
+<% } %>
+
+<hr>
+
+<h4>Reviews</h4>
+<div class="row"> 
+<% if (listing.reviews.length > 0) { %>
+  <% listing.reviews.forEach(review => { %>
+
+    <div class="review border p-3 mb-2 rounded-3 col-md-3 col-sm-6 mb-3 d-flex flex-column mx-2 ">
+      <p><strong>@<%= review.author.username %></strong></p>
+      <p class="starability-result" data-rating="<%= review.rating %>"> </p>
+      <p><%= review.comment %></p>
+      
+      <!-- Show "Delete" button if:
+           1. The user wrote the review
+           2. The host of the listing is viewing the review -->
+           <% if (currUser && review && review.author) { 
+            let isReviewAuthor = review.author._id && review.author._id.toString() === currUser._id.toString();
+            let isListingOwner = listing.owner && listing.owner._id && listing.owner._id.toString() === currUser._id.toString();
+        %>
+        
+            <!-- ✅ Only Show Delete Button if User is Author or Host (Admin Excluded on /listings) -->
+            <% if ((isReviewAuthor || (currUser.role === 'host' && isListingOwner)) && currUser.role !== 'admin') { %>
+                <% if (currUser.role === "host") { %>
+                    <form action="/host/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="d-inline">
+                <% } else { %>
+                    <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="d-inline">
+                <% } %>
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            <% } %>
+        
+        <% } %>
+    </div>
+  <% }); %>
+<% } else { %>
+  <p>No reviews yet.</p>
+<% } %>
+</div>
+</div>
+</div>
+<!-- Map Section -->
+<div class="col-md-8 offset-md-3 mt-4">
+  <h3>Where <%= listing.title %></h3>
+  <div id="map" style="height: 400px;"></div>
+</div>
+<br><br>
+<div class="text-center mt-3">
+    <a href="/listings" class="btn btn-primary btn-lg d-inline px-3 py-1" style="text-decoration: none; font-weight: bold;">
+        &larr; Back to Listings
+    </a>
+</div>
+<br><br>
+<script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (listing.geometry && listing.geometry.coordinates) {
+      const map = new maplibregl.Map({
+        container: 'map',
+        style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${mapToken}`,
+        center: listing.geometry.coordinates,
+        zoom: 9
+      });
+      new maplibregl.Marker({ color: "red" })
+        .setLngLat(listing.geometry.coordinates)
+        .setPopup(new maplibregl.Popup().setHTML(`
+          <h4>${listing.title}</h4>
+          <p>${listing.location}</p>
+          <p>Price:&#8377;<%= listing.price.toLocaleString("en-IN") %></p>
+        `))
+        .addTo(map);
+    } else {
+      document.getElementById('map').innerHTML = "<p>Location data is unavailable.</p>";
+    }
+  });
+</script>

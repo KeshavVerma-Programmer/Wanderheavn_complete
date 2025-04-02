@@ -1,0 +1,107 @@
+<% layout("/layouts/boilerplate") %> 
+
+<style>
+    
+  body {
+      opacity: 0;
+      animation: fadeIn 0.8s ease-in-out forwards;
+  }
+
+  /* Keyframes for Fade-In */
+  @keyframes fadeIn {
+      from {
+          opacity: 0;
+          transform: translateY(-10px);
+      }
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
+
+  #filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  #filters {
+    display: flex;
+    align-items: center;
+    gap: 7rem;
+  }
+
+  .filter {
+    text-align: center;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0.7;
+    text-decoration: none;
+  }
+
+  .filter:hover {
+    opacity: 1;
+  }
+
+  .filter i {
+    font-size: 18px; /* Icon size */
+  }
+  
+</style>
+
+<!-- Filters and Price Range in One Row -->
+<div id="filter-container">
+  <div id="filters">
+    <% const filters = [
+      { icon: "fa-building", label: "Apartment" },
+      { icon: "fa-house-chimney", label: "Villa" },
+      { icon: "fa-house", label: "Cabin" },
+      { icon: "fa-home", label: "Bungalow" },
+      { icon: "fa-umbrella-beach", label: "Resort" },
+      { icon: "fa-campground", label: "Camping" }
+    ]; %>
+
+    <% filters.forEach(filter => { %>
+      <a href="/listings?category=<%= filter.label.toLowerCase() %>" class="filter text-black">
+        <i class="fa-solid <%= filter.icon %>"></i>
+        <p><%= filter.label %></p>
+      </a>
+    <% }) %>
+  </div>
+</div>
+
+<!-- Listings Section -->
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
+  <% if (allListings.length === 0) { %>
+    <p class="text-center">No listings found.</p>
+  <% } %>
+  <% for(let listing of allListings) { %>
+    <div class="card col listing-card">
+      <a href="/listings/<%= listing._id %>" class="listing-link">
+        <img src="<%= listing.images.length ? listing.images[0].url : '/images/default.jpg' %>" 
+        class="card-img-top" 
+        alt="listing_image" 
+        style="height: 20rem;">
+        <div class="card-img-overlay"></div>
+        <div class="card-body">
+          <p class="card-text"><b><%= listing.title %></b><br>
+            &#8377;<%= listing.price.toLocaleString("en-IN") %> /night
+          </p>
+        </div>
+      </a>
+    </div>
+  <% } %>
+</div> 
+
+<!-- Price Range Script -->
+<script>
+  
+  document.addEventListener("DOMContentLoaded", () => {
+    document.body.style.opacity = "1";
+    document.body.style.transition = "opacity 0.8s ease-in-out";
+});
+  
+</script>

@@ -1,0 +1,114 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4 fw-bold text-danger">Admin Login</h2>
+
+                    <!-- Flash Messages for Error/Success -->
+                    <% if (error.length > 0) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <%= error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+
+                    <% if (success.length > 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <%= success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+
+
+                    <form action="/admin/login" method="post" class="needs-validation" novalidate>
+                        <!-- Identifier Field (Username or Email) -->
+                        <div class="mb-3">
+                            <label for="identifier" class="form-label">Username or Email</label>
+                            <input 
+                                name="identifier" 
+                                id="identifier" 
+                                type="text" 
+                                class="form-control" 
+                                placeholder="Enter your username or email"
+                                required
+                            />
+                        </div>
+                    
+                        <!-- Password Field -->
+                        <div class="mb-3 position-relative">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input 
+                                    name="password" 
+                                    id="password" 
+                                    type="password" 
+                                    class="form-control pe-5" 
+                                    placeholder="Enter your password"
+                                    required
+                                />
+                                <span class="input-group-text bg-white border-0 position-absolute end-0 top-50 translate-middle-y pe-3">
+                                    <i id="togglePassword" class="fas fa-eye" style="cursor: pointer;"></i>
+                                </span>
+                            </div>
+                        </div>
+                    
+                        <!-- Login Button -->
+                        <button id="adminLoginBtn" type="submit" class="btn btn-danger w-100 fw-bold">
+                            Login as Admin
+                            <span id="adminSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                        </button>
+                    </form>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show/Hide Password Toggle
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    togglePassword.addEventListener("click", () => {
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+        
+        // Toggle eye icon
+        togglePassword.classList.toggle("fa-eye-slash");
+    });
+
+    // Bootstrap Form Validation with Spinner Effect
+    (function () {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation');
+        const loginBtn = document.getElementById("adminLoginBtn");
+        const loginSpinner = document.getElementById("adminSpinner");
+
+        Array.from(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    event.preventDefault(); // Prevent immediate submission for animation
+
+                    // Show spinner & disable button
+                    loginBtn.disabled = true;
+                    loginSpinner.classList.remove("d-none");
+
+                    // Simulate processing (2 sec), then submit
+                    setTimeout(() => {
+                        loginBtn.disabled = false;
+                        loginSpinner.classList.add("d-none");
+                        form.submit(); // Now submit the form
+                    }, 2000);
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
