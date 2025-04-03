@@ -272,7 +272,7 @@ module.exports.getConfirmationPage = async (req, res) => {
     }
 
     console.log(`📢 Booking ${bookingId} details loaded.`);
-
+    req.flash("success", "Booking created successfully!");
     res.render("bookings/confirmation", { booking, currUser: req.user });
 };
 
