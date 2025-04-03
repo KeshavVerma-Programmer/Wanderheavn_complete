@@ -10,13 +10,6 @@
             class="form-control w-50"
             placeholder="Search by Title or Location"
         />
-
-        <select id="statusFilter" class="form-select w-25">
-            <option value="all">All Status</option>
-            <option value="Active">Active</option>
-            <option value="Pending">Pending</option>
-            <option value="Inactive">Inactive</option>
-        </select>
     </div>
 
     <% if(listings.length > 0) { %>
@@ -27,7 +20,6 @@
                         <th>Title</th>
                         <th>Location</th>
                         <th>Price (&#8377;)</th>
-                        <th>Status</th>
                         <th>Date Added</th>
                         <th>Actions</th>
                     </tr>
@@ -38,18 +30,6 @@
                             <td><%= listing.title %></td>
                             <td><%= listing.location %></td>
                             <td><%= listing.price.toLocaleString("en-IN") %></td>
-                            <td>
-                                <span class="badge 
-                                    <%= listing.status === 'Active' ? 'bg-success' 
-                                    : listing.status === 'Pending' ? 'bg-warning' 
-                                    : 'bg-danger' %>">
-                                    <i class="<%= listing.status === 'Active' ? 'fas fa-check-circle' 
-                                        : listing.status === 'Pending' ? 'fas fa-hourglass-half' 
-                                        : 'fas fa-times-circle' %>">
-                                    </i>
-                                    <%= listing.status %>
-                                </span>
-                            </td>
                             <td><%= new Date(listing.createdAt).toLocaleDateString('en-IN') %></td>
                             <td>
                                 <a href="/host/listings/<%= listing._id %>" 

@@ -43,7 +43,6 @@
     <p><strong>Price - </strong> &#8377; <%= listing.price.toLocaleString("en-IN") %></p>
     <p><strong>Location - </strong> <%= listing.location %>, <%= listing.country %></p>
     <p><strong>Check-in - </strong> <%= listing.formattedCheckInTime %> | <strong>Check-out:</strong> <%= listing.formattedCheckOutTime %></p>
-    <p><strong>Status - </strong> <%= listing.status %></p>
   </div>
   <% if (currUser && currUser.role === 'host' && listing.owner && listing.owner._id.toString() === currUser._id.toString()) { %>
     <a href="/host/listings/<%= listing._id %>/edit" class="btn btn-warning">Edit</a>

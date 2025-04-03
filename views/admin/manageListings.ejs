@@ -23,7 +23,6 @@
                         <th>Location</th>
                         <th>Price (&#8377;)</th>
                         <th>Host Name</th>
-                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -39,14 +38,6 @@
                             <td><%= listing.location %></td>
                             <td><%= listing.price.toLocaleString("en-IN") %></td>
                             <td><%= listing.owner ? listing.owner.username : 'Unknown' %></td>
-                            <td>
-                                <span class="badge 
-                                    <%= listing.status === 'Active' ? 'bg-success' 
-                                    : listing.status === 'Pending' ? 'bg-warning' 
-                                    : 'bg-danger' %>">
-                                    <%= listing.status %>
-                                </span>
-                            </td>
                             <td class="text-center">
                                 <!-- View Listing -->
                                 <a href="/admin/listings/<%= listing._id %>" 

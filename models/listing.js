@@ -41,12 +41,6 @@ const listingSchema = new Schema(
       type: String, 
       required: true 
     },
-    status: { 
-      type: String, 
-      enum: ["Active", "Pending","Already Booked"], 
-      default: "Pending",
-      required: true
-    },
     isFeatured: { 
       type: Boolean, 
       default: false 

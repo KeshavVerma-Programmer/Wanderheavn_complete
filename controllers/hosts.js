@@ -365,6 +365,9 @@ module.exports.viewListing = async (req, res) => {
             req.flash("error", "Listing not found!");
             return res.redirect("/host/listings");
         }
+        // ✅ Default values to prevent undefined errors
+    listing.formattedCheckInTime = listing.checkInTime || "Not Provided";
+    listing.formattedCheckOutTime = listing.checkOutTime || "Not Provided";
 
         res.render("host/listings/view", { listing });
     } catch (error) {

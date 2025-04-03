@@ -95,14 +95,6 @@
           <div class="invalid-feedback">Please select a check-out time.</div>
         </div>
       </div>
-      <div class="mb-3">
-        <label for="status" class="form-label">Status</label>
-        <select class="form-select" id="status" name="listing[status]">
-            <option value="Active" <%= listing.status === 'Active' ? 'selected' : '' %>>Active</option>
-            <option value="Pending" <%= listing.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-            <option value="Already Booked" <%= listing.status === 'Already Booked' ? 'selected' : '' %>>Already Booked</option>
-        </select>
-    </div>
       <button type="submit" class="btn btn-success mt-3">Save Changes</button>
       <a href="/host/manage-listings" class="btn btn-secondary mt-3">Cancel</a>
     </form>
