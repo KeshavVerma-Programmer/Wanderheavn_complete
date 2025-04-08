@@ -57,17 +57,27 @@ module.exports.createBooking = async (req, res) => {
         current.setDate(current.getDate() + 1);
     }
 
-    // Format already booked dates
-    const bookedDates = listing.bookedDates.map(date =>
+    // Get all booked dates (both Paid and Pending) from existing bookings
+const existingBookings = await Booking.find({
+    property: listing._id,
+    status: { $in: ["Paid", "Pending"] }
+});
+
+let allBookedDates = [];
+existingBookings.forEach(booking => {
+    const formatted = booking.bookedDates.map(date =>
         new Date(date).toISOString().split("T")[0]
     );
+    allBookedDates.push(...formatted);
+});
 
-    // Check for overlap with selected dates
-    const overlap = selectedDates.some(date => bookedDates.includes(date));
-    if (overlap) {
-        req.flash("error", "One or more of your selected dates have already been booked.");
-        return res.redirect(`/listings/${id}/book`);
-    }
+// Check for overlap with selected dates
+const overlap = selectedDates.some(date => allBookedDates.includes(date));
+if (overlap) {
+    req.flash("error", "One or more of your selected dates have already been booked.");
+    return res.redirect(`/listings/${id}/book`);
+}
+
 
     // Proceed to payment — ✅ DON'T CHANGE THIS
     res.redirect(

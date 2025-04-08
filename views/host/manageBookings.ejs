@@ -39,13 +39,13 @@
                             <td><%= booking.property ? booking.property.title : "Unknown Property" %></td>
                             <td><%= booking.guest ? booking.guest.username : "Unknown Guest" %></td>
                             <%
-    const checkIn = new Date(booking.bookedDates[0]);
-    const rawCheckOut = new Date(booking.bookedDates[booking.bookedDates.length - 1]);
-    const checkOut = new Date(rawCheckOut);
-    checkOut.setDate(checkOut.getDate() + 1); // ✅ Adjust checkout day
-%>
-<td><%= checkIn.toLocaleDateString('en-IN') %></td>
-<td><%= checkOut.toLocaleDateString('en-IN') %></td>
+                                const checkIn = new Date(booking.bookedDates[0]);
+                                const rawCheckOut = new Date(booking.bookedDates[booking.bookedDates.length - 1]);
+                                const checkOut = new Date(rawCheckOut);
+                                checkOut.setDate(checkOut.getDate() + 1); // ✅ Adjust checkout day
+                            %>
+                            <td><%= checkIn.toLocaleDateString('en-IN') %></td>
+                            <td><%= checkOut.toLocaleDateString('en-IN') %></td>
 
                             <td>
                                 <span class="badge 
