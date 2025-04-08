@@ -20,7 +20,7 @@ const listingSchema = Joi.object({
        status: Joi.string().valid("Active", "Inactive", "Pending").default("Pending"),
        isFeatured: Joi.boolean().default(false),
        category: Joi.string()
-          .valid("apartment", "house", "villa", "cabin", "hotel", "bungalow", "hostel", "resort", "camping", "other")
+          .valid("apartment", "house", "villa", "cabin", "hotel", "bungalow", "hostel", "resort", "camping","cave", "container", "chalet", "room", "treehouse", "igloo", "other")
           .insensitive()
           .required(),
        owner: Joi.string().required(), // ✅ Owner should be a string

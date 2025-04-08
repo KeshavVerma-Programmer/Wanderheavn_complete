@@ -19,7 +19,11 @@ const listingSchema = new Schema(
     category: { 
       type: String, 
       required: true,
-      enum: ["apartment", "villa", "cabin", "bungalow", "resort", "camping"],
+      enum: [
+        "apartment", "house", "villa", "cabin", "hotel", "bungalow", "hostel",
+        "resort", "camping", "cave", "container", "chalet", "room", "treehouse",
+        "igloo", "other"
+      ],
       lowercase: true // Ensure valid categories
     },
     images: [

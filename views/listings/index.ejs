@@ -31,11 +31,12 @@
   #filters {
     display: flex;
     align-items: center;
-    gap: 7rem;
+    gap: 4rem;
   }
 
   .filter {
     text-align: center;
+    font-weight: bold;
     cursor: pointer;
     font-size: 12px;
     opacity: 0.7;
@@ -56,14 +57,20 @@
 <div id="filter-container">
   <div id="filters">
     <% const filters = [
-      { icon: "fa-building", label: "Apartment" },
-      { icon: "fa-house-chimney", label: "Villa" },
-      { icon: "fa-house", label: "Cabin" },
-      { icon: "fa-home", label: "Bungalow" },
-      { icon: "fa-umbrella-beach", label: "Resort" },
-      { icon: "fa-campground", label: "Camping" }
-    ]; %>
-
+  { icon: "fa-building", label: "Apartment" },
+  { icon: "fa-house-chimney", label: "Villa" },
+  { icon: "fa-house", label: "Cabin" },
+  { icon: "fa-home", label: "Bungalow" },
+  { icon: "fa-umbrella-beach", label: "Resort" },
+  { icon: "fa-campground", label: "Camping" },
+  { icon: "fa-box", label: "Container" },
+  { icon: "fa-mountain", label: "Cave" },
+  { icon: "fa-bed", label: "Room" },
+  { icon: "fa-tree", label: "Treehouse" },
+  { icon: "fa-igloo", label: "Igloo" },
+  { icon: "fa-fire", label: "Chalet" }
+  ]; %>
+  
     <% filters.forEach(filter => { %>
       <a href="/listings?category=<%= filter.label.toLowerCase() %>" class="filter text-black">
         <i class="fa-solid <%= filter.icon %>"></i>
