@@ -1,0 +1,58 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+    <h1 class="text-center text-uppercase fw-bold">Admin Analytics</h1>
+    <br>
+    <!-- Summary Cards -->
+    <div class="row g-4 text-center">
+
+        <div class="col-md-12">
+            <div class="card shadow-sm p-3 bg-warning text-dark">
+                <h5 class="card-title">Total Bookings on Platform</h5>
+                <p class="display-6 fw-bold"><%= totalBookings || 0 %></p>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card shadow-sm p-3 bg-danger text-white">
+                <h5 class="card-title">Admin Earnings (10%)</h5>
+                <p class="display-6 fw-bold">&#8377;<%= adminEarnings || 0 %></p>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Monthly Revenue Chart -->
+    <div class="mt-4">
+        <canvas id="revenueChart"></canvas>
+    </div>
+</div>
+<a href="/admin/dashboard" class="btn btn-secondary">Back</a>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById("revenueChart").getContext("2d");
+
+        const data = {
+            labels: <%= JSON.stringify(monthlyRevenue.map(entry => `Month ${entry._id}`)) %>,
+            datasets: [{
+                label: "Revenue (₹)",
+                data: <%= JSON.stringify(monthlyRevenue.map(entry => entry.total)) %>,
+                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 2
+            }]
+        };
+
+        new Chart(ctx, {
+            type: "bar",
+            data: data,
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>

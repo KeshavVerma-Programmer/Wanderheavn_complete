@@ -1,0 +1,97 @@
+<% layout("/layouts/boilerplate") %>
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-uppercase fw-bold">My Bookings</h2>
+
+    <!-- Search & Filter Section -->
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <input
+            type="text"
+            id="bookingSearch"
+            class="form-control w-50"
+            placeholder="Search by Property or Guest Name"
+        />
+
+        <select id="statusFilter" class="form-select w-25">
+            <option value="all">All Status</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+    </div>
+
+    <% if(bookings.length > 0) { %>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Property</th>
+                        <th>Guest</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Status</th>
+                        <th>Payment</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingTableBody">
+                    <% bookings.forEach(booking => { %>
+                        <tr>
+                            <td><%= booking.property ? booking.property.title : "Unknown Property" %></td>
+                            <td><%= booking.guest ? booking.guest.username : "Unknown Guest" %></td>
+                            <%
+    const checkIn = new Date(booking.bookedDates[0]);
+    const rawCheckOut = new Date(booking.bookedDates[booking.bookedDates.length - 1]);
+    const checkOut = new Date(rawCheckOut);
+    checkOut.setDate(checkOut.getDate() + 1); // ✅ Adjust checkout day
+%>
+<td><%= checkIn.toLocaleDateString('en-IN') %></td>
+<td><%= checkOut.toLocaleDateString('en-IN') %></td>
+
+                            <td>
+                                <span class="badge 
+                                    <%= booking.status === 'Paid' ? 'bg-success' 
+                                    : booking.status === 'Pending' ? 'bg-warning' 
+                                    : 'bg-danger' %>">
+                                    <%= booking.status %>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge <%= booking.status === 'Paid' ? 'bg-success' : 'bg-warning' %>">
+                                    <%= booking.status === 'Paid' ? 'Completed' : 'Pending' %>
+                                </span>
+                            </td>
+                            <td>₹<%= booking.totalPrice ? booking.totalPrice.toLocaleString("en-IN") : "N/A" %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <p class="text-center text-warning">No bookings available.</p>
+    <% } %>
+</div>
+
+<a href="/host/dashboard" class="btn btn-secondary">Back</a>
+
+<script>
+    // Search & Filter Functionality
+    document.getElementById("bookingSearch").addEventListener("input", filterBookings);
+    document.getElementById("statusFilter").addEventListener("change", filterBookings);
+
+    function filterBookings() {
+        const searchValue = document.getElementById("bookingSearch").value.toLowerCase();
+        const statusFilter = document.getElementById("statusFilter").value.toLowerCase();
+        const rows = document.querySelectorAll("#bookingTableBody tr");
+
+        rows.forEach(row => {
+            const property = row.children[0].textContent.toLowerCase();
+            const guest = row.children[1].textContent.toLowerCase();
+            const status = row.children[4].textContent.toLowerCase();
+
+            const matchesSearch = property.includes(searchValue) || guest.includes(searchValue);
+            const matchesStatus = statusFilter === "all" || status === statusFilter;
+
+            row.style.display = matchesSearch && matchesStatus ? "" : "none";
+        });
+    }
+</script>

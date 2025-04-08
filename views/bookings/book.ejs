@@ -1,0 +1,114 @@
+<% layout("/layouts/boilerplate") %>
+
+<!-- Bootstrap Datepicker CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<style>
+    .datepicker-dropdown {
+        z-index: 1050 !important; /* Ensure it appears above modals */
+    }
+</style>
+
+<div class="container mt-5">
+    <h2>Book <%= listing.title %></h2>
+    <br><br>
+    <img src="<%= listing.images.length > 0 ? listing.images[0].url : '/default-image.jpg' %>" class="img-fluid" alt="Listing Image">
+    <br><br>
+    
+    <div class="mb-3">
+        <p><strong>Location:</strong> <%= listing.location %>, <%= listing.country %></p>
+        <p><strong>Category - </strong> <%= listing.category %></p>
+        <p><strong>Description - </strong> <%= listing.description %></p>
+        <p><strong>Check-in - </strong> <%= listing.checkInTime %> | <strong>Check-out:</strong> <%= listing.checkOutTime %></p>
+    </div>
+    
+    <br>
+    
+    <form action="/listings/<%= listing._id %>/book" method="POST">
+        <div class="mb-3">
+            <label for="checkInDate"><strong>Check-in Date:</strong></label>
+            <input type="text" id="checkInDate" name="checkInDate" class="form-control" placeholder="Select check-in date" autocomplete="off">
+        </div>
+    
+        <div class="mb-3">
+            <label for="checkOutDate"><strong>Check-out Date:</strong></label>
+            <input type="text" id="checkOutDate" name="checkOutDate" class="form-control" placeholder="Select check-out date" autocomplete="off">
+        </div>
+    
+        <p><strong>Price per night: </strong> ₹ <%= listing.price.toLocaleString("en-IN") %></p>
+        <p><strong>Total Price: </strong> ₹ <span id="totalPrice">0</span></p>
+    
+        <button type="submit" class="btn btn-success" disabled>Proceed to Payment</button>
+    </form>
+    <br>
+    <a href="/listings/<%= listing._id %>" class="btn btn-secondary">Back</a>
+</div>
+<br>
+<!-- Bootstrap & Datepicker Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        console.log("📅 Initializing dual datepickers...");
+    
+        const $checkIn = $("#checkInDate");
+        const $checkOut = $("#checkOutDate");
+        const $submitBtn = $("button[type='submit']");
+        const $totalPrice = $("#totalPrice");
+        const pricePerNight = <%= listing.price %>;
+    
+        $submitBtn.prop("disabled", true);
+    
+        $checkIn.datepicker({
+            format: "yyyy-mm-dd",
+            startDate: new Date(),
+            autoclose: true
+        }).on("changeDate", function (e) {
+            const checkIn = e.date;
+            console.log("🟢 Check-in selected:", checkIn);
+    
+            // Set the min date for check-out to the day *after* check-in
+            const nextDay = new Date(checkIn);
+            nextDay.setDate(nextDay.getDate() + 1);
+    
+            $checkOut.datepicker("setStartDate", nextDay);
+            $checkOut.val(""); // Clear previous value
+            $submitBtn.prop("disabled", true);
+            $totalPrice.text("0");
+        });
+    
+        $checkOut.datepicker({
+    format: "yyyy-mm-dd",
+    startDate: new Date(),
+    autoclose: true
+}).on("changeDate", function () {
+    const checkInVal = $checkIn.datepicker("getDate");
+    const checkOutVal = $checkOut.datepicker("getDate");
+
+    if (!checkInVal || !checkOutVal) {
+        console.warn("⚠️ Both dates must be selected.");
+        $submitBtn.prop("disabled", true);
+        $totalPrice.text("0");
+        return;
+    }
+
+    const diffTime = checkOutVal.getTime() - checkInVal.getTime();
+    const nights = diffTime / (1000 * 60 * 60 * 24);
+
+    if (nights < 1) {
+        console.warn("⚠️ Checkout must be after check-in!");
+        $submitBtn.prop("disabled", true);
+        $totalPrice.text("0");
+        return;
+    }
+
+    const total = nights * pricePerNight;
+    $totalPrice.text(total.toLocaleString("en-IN"));
+    $submitBtn.prop("disabled", false);
+});
+
+    
+        console.log("✅ Dual datepickers initialized.");
+    });
+</script>

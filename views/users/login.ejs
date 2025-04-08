@@ -1,0 +1,116 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4 fw-bold text-success">User Login</h2>
+
+                   <!-- Flash Messages for Error/Success -->
+
+                    <% if (success.length > 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <%= success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+
+                    <form action="/user/login" method="post" class="needs-validation" novalidate>
+                        <!-- Identifier Field (Username or Email) -->
+                        <div class="mb-3">
+                            <label for="identifier" class="form-label">Username or Email</label>
+                            <input 
+                                name="identifier" 
+                                id="identifier" 
+                                type="text" 
+                                class="form-control" 
+                                placeholder="Enter your username or email"
+                                required
+                            />
+                        </div>
+                    
+                        <!-- Password Field with Eye Icon -->
+                        <div class="mb-3 position-relative">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input 
+                                    name="password" 
+                                    id="password" 
+                                    type="password" 
+                                    class="form-control pe-5" 
+                                    placeholder="Enter your password"
+                                    required
+                                />
+                                <span class="input-group-text bg-white border-0 position-absolute end-0 top-50 translate-middle-y pe-3">
+                                    <i id="togglePassword" class="fas fa-eye" style="cursor: pointer;"></i>
+                                </span>
+                            </div>
+                        </div>
+                    
+                        <!-- Login Button -->
+                        <button id="loginBtn" class="btn btn-success w-100 fw-bold" type="submit">
+                            Login as User
+                            <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
+                        </button>
+                        
+                    </form>
+                    
+                    <!-- Additional Links -->
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a href="/signup" class="text-primary fw-bold">Sign up here</a></p>
+                        <p>Are you a host? <a href="/host/login" class="text-primary fw-bold">Login as a Host</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show/Hide Password Toggle
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    togglePassword.addEventListener("click", () => {
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+        togglePassword.classList.toggle("fa-eye-slash");
+    });
+
+    // Bootstrap Form Validation + Spinner on Submit
+    (() => {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    event.preventDefault(); // Stop actual form submission
+
+                    // Show spinner and disable button
+                    const loginBtn = document.getElementById("loginBtn");
+                    const loginSpinner = document.getElementById("loginSpinner");
+
+                    loginBtn.disabled = true;
+                    loginSpinner.classList.remove("d-none");
+
+                    setTimeout(() => {
+                        loginBtn.disabled = false;
+                        loginSpinner.classList.add("d-none");
+                        form.submit();
+                    }, 1000);
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+
+
+<!-- FontAwesome for Icons -->
+<script src="https://kit.fontawesome.com/your-kit-code.js" crossorigin="anonymous"></script>

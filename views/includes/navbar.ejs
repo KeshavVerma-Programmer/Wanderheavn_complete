@@ -1,0 +1,130 @@
+<style>
+  .search-btn{
+    background-color: #fe424d;
+    color: #fff;
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem; /* Increased padding for better alignment */
+    border: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center
+    }
+  .search-btn:hover{
+    background-color: #fe424d;
+    color: #fff;
+  }
+  .search-btn i{
+    display: inline;
+    margin-right: 0.5rem;
+  }
+  .search-inp{
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem; /* Adjusted padding */
+    font-size: 1rem;
+    width: 250px; /* Ensuring input width */
+    }
+    .navbar-nav form {
+    display: flex;
+    align-items: center; /* Centering input and button */
+    gap: 0.5rem;
+  }
+
+  /* Responsive Fix */
+  @media (max-width: 768px) {
+    .search-inp {
+      width: 180px;
+    }
+    .search-btn {
+      padding: 0.4rem 1rem;
+    }
+  }
+
+  .navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #fe424d;
+  }
+
+  .nav-link {
+    font-weight: 500;
+    transition: color 0.3s ease-in-out;
+  }
+
+  .nav-link:hover {
+    color: #fe424d;
+  }
+
+  .active-link {
+    color: #fe424d !important;
+    font-weight: bold;
+    border-bottom: 2px solid #fe424d;
+  }
+</style>
+
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i> WanderHeavn</a>
+    <button class="navbar-toggler" type="button" 
+    data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link active-link" href="/listings">Explore</a>
+      </div>
+      <div class="navbar-nav ms-auto">
+        <form class="d-flex" role="search" action="/listings" method="GET">
+          <input class="form-control me-2 search-inp" type="text" name="search" value="<%= search || '' %>" placeholder="Search by location, title, or price">
+          <button class="btn search-btn" type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+          </button>
+        </form>
+      </div>
+      <div class="navbar-nav ms-auto">
+        
+        <% if (!currUser) { %>
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="hostDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              Wanderheavn your home
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="hostDropdown">
+              <li><a class="dropdown-item" href="/host/signup">Host Sign up</a></li>
+              <li><a class="dropdown-item" href="/host/login">Host Log in</a></li>
+            </ul>
+          </div>
+        <% } %>
+
+        
+        <% if (currUser && currUser.role === 'admin') { %>
+          <a class="nav-link" href="/admin/dashboard">Admin Dashboard</a>
+          <a class="nav-link profile-icon d-flex align-items-center text-danger" href="/admin/profile">
+            <i class="fa-solid fa-user-circle fa-lg me-2"></i>
+        <% } %>
+
+        <% if (currUser && currUser.role === 'host') { %>
+          <a class="nav-link" href="/host/dashboard">Host Dashboard</a>
+          <a class="nav-link" href="/host/listings/new">Wanderheavn your home</a>
+          <a class="nav-link profile-icon d-flex align-items-center text-primary" href="/host/profile">
+            <i class="fa-solid fa-user-circle fa-lg me-2"></i>
+        <% } %>
+
+        <% if (currUser && currUser.role === 'user') { %>
+          <a class="nav-link" href="/user/bookings">My Bookings</a>
+          <a class="nav-link profile-icon d-flex align-items-center text-success" href="/user/profile">
+            <i class="fa-solid fa-user-circle fa-lg me-2"></i>
+        <% } %>
+
+        <% if (!currUser) { %>
+          <a class="nav-link" href="/signup"><b>Sign up</b></a>
+          <a class="nav-link" href="/user/login"><b>Log in</b></a>
+        <% } %>
+
+        <% if (currUser) { %>
+          <a class="nav-link" href="/logout"><b>Log out</b></a>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+</nav>

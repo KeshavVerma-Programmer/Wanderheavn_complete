@@ -1,0 +1,56 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+    <h2>My Bookings</h2>
+
+    <% if (bookings.length === 0) { %>
+        <p>You have no bookings yet.</p>
+    <% } else { %>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Listing</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% bookings.forEach(booking => { %>
+                    <tr>
+                        <td>
+                            <% if (booking.property) { %>
+                                <a href="/listings/<%= booking.property._id %>">
+                                    <%= booking.property.title %>
+                                </a>
+                            <% } else { %>
+                                <span class="text-muted">Listing removed</span>
+                            <% } %>
+                        </td>
+
+                        <%
+                            const sortedDates = booking.bookedDates.map(d => new Date(d)).sort((a, b) => a - b);
+                            const checkIn = sortedDates[0];
+                            const checkOut = new Date(sortedDates[sortedDates.length - 1]);
+                            checkOut.setDate(checkOut.getDate() + 1); // Add 1 day to get actual checkout
+                        %>
+
+                        <td>
+                            <%= checkIn.toDateString() %><br>
+                            <small class="text-muted"><%= booking.property.checkInTime || "12:00 PM" %> </small>
+                        </td>
+                        <td>
+                            <%= checkOut.toDateString() %><br>
+                            <small class="text-muted"><%= booking.property.checkOutTime || "11:00 AM" %></small>
+                        </td>
+                        <td>₹<%= booking.totalPrice.toLocaleString("en-IN") %></td>
+                        <td><%= booking.status %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+
+    <a href="/listings" class="btn btn-secondary">Back</a>
+</div>

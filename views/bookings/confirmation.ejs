@@ -1,0 +1,42 @@
+
+ <% layout("layouts/boilerplate") %>
+
+<div class="container mt-5">
+    <h2 class="text-success">🎉 Booking Confirmed!</h2>
+    <p class="lead">Your booking has been successfully confirmed. Below are the details:</p>
+    
+    <div class="card shadow-lg p-4" >
+        <h4><%= booking.property ? booking.property.title : "❌ Property Undefined" %></h4>
+
+        <img src="<%= booking.property && booking.property.images.length > 0 ? booking.property.images[0].url : '/default-image.jpg' %>" 
+             class="img-fluid rounded" alt="Property Image" height="400px" width="409px">
+        <br>
+        <p><strong>Location:</strong> <%= booking.property ? booking.property.location : "❌ Location Undefined" %>, 
+                                   <%= booking.property ? booking.property.country : "❌ Country Undefined" %></p>
+        
+        <p><strong>Category:</strong> <%= booking.property ? booking.property.category : "❌ Category Undefined" %></p>
+        
+        <%
+            const checkIn = new Date(booking.bookedDates[0]);
+            const lastBooked = new Date(booking.bookedDates[booking.bookedDates.length - 1]);
+            const checkOut = new Date(lastBooked);
+            checkOut.setDate(checkOut.getDate() + 1);
+        %>
+        <p><strong>Check-in:</strong> <%= checkIn.toDateString() %> | 
+        <strong>Check-out:</strong> <%= checkOut.toDateString() %></p>
+
+        <p><strong>Guest:</strong> <%= booking.guest ? booking.guest.username : "❌ Guest Undefined" %></p>
+        
+
+        
+        <p><strong>Total Price:</strong> ₹<%= booking.totalPrice ? booking.totalPrice : "❌ Total Price Undefined" %></p>
+        
+        <p><strong>Payment Status:</strong> <%= booking.status ? booking.status : "❌ Payment Status Undefined" %></p>
+        
+    <a href="/listings" class="btn btn-primary mt-4">Go to Home</a>
+
+    </div>
+
+    </div>
+<br>
+

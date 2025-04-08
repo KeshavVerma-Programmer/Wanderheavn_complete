@@ -1,0 +1,24 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-3 fw-bold text-primary">Host Profile</h2>
+                    <!-- Personal Details -->
+                    <h4 class="text-primary">Personal Details</h4>
+                    <p><strong>Username:</strong> <%= host.username %></p>
+                    <p><strong>Email:</strong> <%= host.email %></p>
+                    <p><strong>Phone:</strong> <%= host.phone %></p>
+                    <hr>
+                    <!-- Actions -->
+                    <div class="text-center">
+                        <a href="/host/dashboard" class="btn btn-secondary">Back</a>
+                        <a href="/logout" class="btn btn-danger fw-bold">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

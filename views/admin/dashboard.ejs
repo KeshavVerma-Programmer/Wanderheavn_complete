@@ -1,0 +1,93 @@
+<% layout("/layouts/boilerplate") %>
+<style>
+      body {
+      opacity: 0;
+      animation: fadeIn 0.8s ease-in-out forwards;
+  } 
+  #analytics{
+    margin-top: 70px;
+  }
+  #field{
+    margin-top: 100px;
+  }
+  /* Keyframes for Fade-In */
+  @keyframes fadeIn {
+      from {
+          opacity: 0;
+          transform: translateY(-10px);
+      }
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-uppercase fw-bold">Admin Dashboard</h1>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4" id="field">
+        <!-- Total Users -->
+        <div class="col">
+            <div class="card shadow-sm p-3 mb-3 border-primary">
+                <h5 class="card-title"><i class="fas fa-users me-2"></i> Total Users</h5>
+                <p class="display-6 fw-bold text-primary mb-3"><%= totalUsers %></p>
+                <a href="/admin/manage-users" class="btn btn-primary w-100" role="button">Manage Users</a>
+            </div>
+        </div>
+
+        <!-- Total Hosts -->
+        <div class="col">
+            <div class="card shadow-sm p-3 mb-3 border-success">
+                <h5 class="card-title"><i class="fas fa-user-tie me-2"></i> Total Hosts</h5>
+                <p class="display-6 fw-bold text-success mb-3"><%= totalHosts %></p>
+                <a href="/admin/manage-hosts" class="btn btn-success w-100" role="button">Manage Hosts</a>
+            </div>
+        </div>
+
+        <!-- Total Listings -->
+        <div class="col">
+            <div class="card shadow-sm p-3 mb-3 border-warning">
+                <h5 class="card-title"><i class="fas fa-home me-2"></i> Total Listings</h5>
+                <p class="display-6 fw-bold text-warning mb-3"><%= totalListings %></p>
+                <a href="/admin/manage-listings" class="btn btn-warning w-100" role="button">Manage Listings</a>
+            </div>
+        </div>
+
+        <!-- Total Reviews -->
+        <div class="col">
+            <div class="card shadow-sm p-3 mb-3 border-danger">
+                <h5 class="card-title"><i class="fas fa-comment-dots me-2"></i> Total Reviews</h5>
+                <p class="display-6 fw-bold text-danger mb-3"><%= totalReviews %></p>
+                <a href="/admin/listings/manage-reviews" class="btn btn-danger w-100" role="button">Manage Reviews</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Analytics - Full Width -->
+    <div class="row" id="analytics">
+        <div class="col-12">
+            <div class="card shadow-sm p-4 border-info">
+                <h5 class="card-title"><i class="fas fa-chart-line me-2"></i> System Analytics</h5>
+                <p>Monitor platform performance, user engagement, and insights.</p>
+                <a href="/admin/analytics" class="btn btn-info w-100" role="button">View Analytics</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hover Effect Script -->
+<script>
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('shadow-lg', 'transition');
+        });
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('shadow-lg');
+        });
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+    document.body.style.opacity = "1";
+    document.body.style.transition = "opacity 0.8s ease-in-out";
+});
+</script>

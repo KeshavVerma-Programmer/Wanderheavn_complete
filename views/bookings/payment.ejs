@@ -1,0 +1,161 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+    <h2>Payment for <%= booking.property.title %></h2>
+    <img src="<%= booking.property.images.length > 0 ? booking.property.images[0].url : '/default-image.jpg' %>" 
+         class="img-fluid" alt="Listing Image" style="width: 50%;">
+    <br><br>
+
+    <div class="mb-3">
+        <p><strong>Location:</strong> <%= booking.property.location %>, <%= booking.property.country %></p>
+        <p><strong>Category:</strong> <%= booking.property.category %></p>
+        <p><strong>Description:</strong> <%= booking.property.description %></p>
+        <p><strong>Price per night:</strong> ₹<%= booking.property.price.toLocaleString("en-IN") %></p>
+    </div>
+
+    <h4>Selected Dates:</h4>
+<ul>
+    <% 
+        const nights = booking.bookedDates;
+        if (nights.length > 0) {
+            const checkIn = new Date(nights[0]);
+            const checkOut = new Date(nights[nights.length - 1]);
+            checkOut.setDate(checkOut.getDate() + 1); // because checkOut is excluded from backend array
+    %>
+        <li><strong>Check-in:</strong> <%= checkIn.toDateString() %></li>
+        <% if (nights.length > 1) { %>
+            <% for (let i = 1; i < nights.length; i++) { %>
+                <li><strong></strong> <%= new Date(nights[i]).toDateString() %></li>
+            <% } %>
+        <% } %>
+        <li><strong>Check-out:</strong> <%= checkOut.toDateString() %></li>
+    <% } else { %>
+        <li>No dates selected.</li>
+    <% } %>
+</ul>
+
+
+    <h3>Total Price: ₹<%= booking.totalPrice.toLocaleString("en-IN") %></h3>
+
+    <!-- ✅ Hidden input field to store booking dates -->
+    <input type="hidden" id="bookingDates" name="bookingDates" value="<%= booking.bookedDates.join(',') %>">
+
+    <button class="btn btn-success" id="payNowBtn">Proceed to Payment</button>
+</div>
+<a href="/listings" class="btn btn-secondary mt-4 " style="margin-left: 12px;">back</a>
+<br><br>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+async function startPayment() {
+    try {
+        let bookingDatesInput = document.getElementById("bookingDates");
+
+        if (!bookingDatesInput) {
+            console.error("❌ Booking Dates element not found!");
+            alert("❌ Booking dates are missing.");
+            return;
+        }
+
+        let bookingDates = bookingDatesInput.value;
+        let listingId = "<%= booking.property._id %>";
+
+        console.log("📢 Sending bookingDates:", bookingDates);
+        console.log("📢 Sending listingId:", listingId);
+
+        if (!bookingDates || !listingId) {
+            alert("❌ Missing required fields: bookingDates or listingId.");
+            return;
+        }
+
+        let response = await fetch(`/listings/${listingId}/payment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ bookingDates: bookingDates }),
+        });
+
+        let data = await response.json();
+        if (!data.success) {
+            alert("❌ Error creating Razorpay order: " + data.message);
+            return;
+        }
+
+        console.log("✅ Razorpay Order Created:", data);
+
+        if (!data.orderId) {
+            alert("❌ Missing Order ID from Server.");
+            return;
+        }
+
+        var options = {
+    key: data.key,
+    amount: data.amount,
+    currency: data.currency,
+    name: "WanderHeavn",
+    description: "Booking Payment",
+    order_id: data.orderId,
+    handler: async function (response) {
+        try {
+            let verifyResponse = await fetch(`/listings/${listingId}/payment/verify`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    paymentId: response.razorpay_payment_id,
+                    orderId: response.razorpay_order_id,
+                    signature: response.razorpay_signature,
+                }),
+            });
+
+            let verifyData = await verifyResponse.json();
+            console.log("✅ Payment Verification Response:", verifyData);
+
+            if (!verifyData.bookingId) {
+                alert("❌ Booking ID is missing from the server response.");
+                return;
+            }
+
+            window.location.href = `/listings/${listingId}/confirmation?bookingId=${verifyData.bookingId}`;
+        } catch (error) {
+            console.error("❌ Error verifying payment:", error);
+            alert("❌ Payment verification failed.");
+        }
+    },modal: {
+    ondismiss: function () {
+        fetch('/bookings/cleanup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ orderId: data.orderId }) // 👈 important
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("🧹 Cleanup Response:", data.message);
+        })
+        .catch(err => {
+            console.error("❌ Cleanup failed:", err);
+        });
+    }
+}
+,
+    prefill: {
+        name: "test",
+        email: "test",
+    },
+    theme: {
+        color: "#3399cc",
+    },
+};
+
+var rzp1 = new Razorpay(options);
+rzp1.open();
+
+    } catch (error) {
+        console.error("❌ Error processing payment:", error);
+        alert("❌ Error processing payment.");
+    }
+}
+
+// ✅ Start payment when button is clicked
+document.getElementById("payNowBtn").addEventListener("click", startPayment);
+
+</script>

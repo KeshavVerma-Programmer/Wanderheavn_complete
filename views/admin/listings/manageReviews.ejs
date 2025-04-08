@@ -1,0 +1,70 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+    <h2 class="text-center text-danger">Manage Reviews</h2>
+    
+    <!-- Search Bar -->
+    <div class="d-flex justify-content-center my-3">
+        <input type="text" id="searchInput" class="form-control w-50 text-center" placeholder="Search by Listing Title, Reviewer, or Host">
+    </div>
+
+    <% let hasReviews = false; %>
+    <% listings.forEach(listing => { if (listing.reviews.length > 0) hasReviews = true; }); %>
+
+    <% if (hasReviews) { %>
+        <table class="table table-hover table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Listing Title</th>
+                    <th>Host</th>
+                    <th>Reviewer</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="reviewTable">
+                <% listings.forEach(listing => { %>
+                    <% listing.reviews.forEach(review => { %>
+                        <tr>
+                            <td><%= listing.title %></td>
+                            <td><%= listing.owner ? listing.owner.username : "Unknown" %></td>
+                            <td><%= review.author ? review.author.username : "Unknown" %></td>
+                            <td><%= review.rating %> ★</td>
+                            <td><%= review.comment %></td>
+                            <td>
+                                <form action="/admin/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p class="text-center text-danger fw-bold mt-4 p-3 bg-light rounded">
+             No reviews available yet! 
+        </p>
+    <% } %>
+</div>
+<br><br>
+<a href="/admin/dashboard" class="btn btn-secondary">Back</a>
+<script>
+    document.getElementById("searchInput").addEventListener("keyup", function() {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#reviewTable tr");
+        
+        rows.forEach(row => {
+            let title = row.cells[0].textContent.toLowerCase();
+            let host = row.cells[1].textContent.toLowerCase();
+            let reviewer = row.cells[2].textContent.toLowerCase();
+            
+            if (title.includes(filter) || host.includes(filter) || reviewer.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+</script>
