@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const wrapAsync = require('../utils/wrapAsync.js');
 const ExpressError = require('../utils/ExpressError.js');
-const mongoose = require("mongoose"); // For ObjectId validation
+const mongoose = require("mongoose"); 
 const Listing = require("../models/listing.js");
 const Review = require("../models/review.js");
 

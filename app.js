@@ -24,6 +24,7 @@ const userRouter = require("./routes/user.js");
 const adminRoutes = require("./routes/admin");
 const hostRoutes = require("./routes/host");
 const bookingRoutes = require('./routes/booking.js');
+const staticRoutes = require('./routes/static');
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderheavn";
 
@@ -193,6 +194,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/", userRouter);
+app.use('/', staticRoutes);
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/admin", adminRoutes);
