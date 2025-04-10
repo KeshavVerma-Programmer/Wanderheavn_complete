@@ -38,11 +38,13 @@
 
                         <td>
                             <%= checkIn.toDateString() %><br>
-                            <small class="text-muted"><%= booking.property.checkInTime || "12:00 PM" %> </small>
+                            <small class="text-muted"><%= booking.property ? booking.property.checkInTime || "12:00 PM" : "12:00 PM" %></small>
+
                         </td>
                         <td>
                             <%= checkOut.toDateString() %><br>
-                            <small class="text-muted"><%= booking.property.checkOutTime || "11:00 AM" %></small>
+                            <small class="text-muted"><%= booking.property ? booking.property.checkOutTime || "11:00 AM" : "11:00 AM" %></small>
+
                         </td>
                         <td>₹<%= booking.totalPrice.toLocaleString("en-IN") %></td>
                         <td><%= booking.status %></td>
