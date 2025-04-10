@@ -35,11 +35,19 @@
             <input type="text" id="checkOutDate" name="checkOutDate" class="form-control" placeholder="Select check-out date" autocomplete="off">
         </div>
     
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="" id="ageCheck">
+            <label class="form-check-label" for="ageCheck">
+                I confirm that I am 18 years old or above
+            </label>
+        </div>
+    
         <p><strong>Price per night: </strong> ₹ <%= listing.price.toLocaleString("en-IN") %></p>
         <p><strong>Total Price: </strong> ₹ <span id="totalPrice">0</span></p>
     
-        <button type="submit" class="btn btn-success" disabled>Proceed to Payment</button>
+        <button type="submit" class="btn btn-success" id="bookBtn" disabled>Proceed to Payment</button>
     </form>
+    
     <br>
     <a href="/listings/<%= listing._id %>" class="btn btn-secondary">Back</a>
 </div>
@@ -50,65 +58,59 @@
 
 <script>
     $(document).ready(function () {
-        console.log("📅 Initializing dual datepickers...");
-    
         const $checkIn = $("#checkInDate");
         const $checkOut = $("#checkOutDate");
-        const $submitBtn = $("button[type='submit']");
+        const $submitBtn = $("#bookBtn");
         const $totalPrice = $("#totalPrice");
+        const $ageCheck = $("#ageCheck");
         const pricePerNight = <%= listing.price %>;
-    
-        $submitBtn.prop("disabled", true);
-    
+
+        let datesValid = false;
+
+        function updateButtonState() {
+            const isAgeChecked = $ageCheck.is(":checked");
+            $submitBtn.prop("disabled", !(datesValid && isAgeChecked));
+        }
+
         $checkIn.datepicker({
             format: "yyyy-mm-dd",
             startDate: new Date(),
             autoclose: true
         }).on("changeDate", function (e) {
             const checkIn = e.date;
-            console.log("🟢 Check-in selected:", checkIn);
-    
-            // Set the min date for check-out to the day *after* check-in
             const nextDay = new Date(checkIn);
             nextDay.setDate(nextDay.getDate() + 1);
-    
             $checkOut.datepicker("setStartDate", nextDay);
-            $checkOut.val(""); // Clear previous value
-            $submitBtn.prop("disabled", true);
+            $checkOut.val("");
+            datesValid = false;
+            updateButtonState();
             $totalPrice.text("0");
         });
-    
+
         $checkOut.datepicker({
-    format: "yyyy-mm-dd",
-    startDate: new Date(),
-    autoclose: true
-}).on("changeDate", function () {
-    const checkInVal = $checkIn.datepicker("getDate");
-    const checkOutVal = $checkOut.datepicker("getDate");
+            format: "yyyy-mm-dd",
+            startDate: new Date(),
+            autoclose: true
+        }).on("changeDate", function () {
+            const checkInVal = $checkIn.datepicker("getDate");
+            const checkOutVal = $checkOut.datepicker("getDate");
 
-    if (!checkInVal || !checkOutVal) {
-        console.warn("⚠️ Both dates must be selected.");
-        $submitBtn.prop("disabled", true);
-        $totalPrice.text("0");
-        return;
-    }
+            if (!checkInVal || !checkOutVal || checkOutVal <= checkInVal) {
+                datesValid = false;
+                $totalPrice.text("0");
+            } else {
+                const nights = (checkOutVal - checkInVal) / (1000 * 60 * 60 * 24);
+                const total = nights * pricePerNight;
+                $totalPrice.text(total.toLocaleString("en-IN"));
+                datesValid = true;
+            }
 
-    const diffTime = checkOutVal.getTime() - checkInVal.getTime();
-    const nights = diffTime / (1000 * 60 * 60 * 24);
+            updateButtonState();
+        });
 
-    if (nights < 1) {
-        console.warn("⚠️ Checkout must be after check-in!");
-        $submitBtn.prop("disabled", true);
-        $totalPrice.text("0");
-        return;
-    }
+        $ageCheck.on("change", updateButtonState);
 
-    const total = nights * pricePerNight;
-    $totalPrice.text(total.toLocaleString("en-IN"));
-    $submitBtn.prop("disabled", false);
-});
-
-    
-        console.log("✅ Dual datepickers initialized.");
+        console.log("✅ Booking form with age check ready.");
     });
 </script>
+
