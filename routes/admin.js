@@ -18,7 +18,7 @@ const {
     approveListing,
     rejectListing,
     featureListing
- ,manageHosts,deleteHosts,viewListing,renderEditForm,updateListing,renderDeletePage,deleteListing,destroyReview,viewAllReviews,deleteReview,renderAdminAnalytics
+ ,manageHosts,deleteHosts,viewListing,renderEditForm,updateListing,renderDeletePage,deleteListing,destroyReview,viewAllReviews,deleteReview,renderAdminAnalytics,viewBookings
 } = require("../controllers/admin");
 
 
@@ -79,12 +79,7 @@ router.post("/manage-listings/:id/reject", isAdmin, rejectListing);
 router.post("/manage-listings/:id/feature", isAdmin, featureListing);
 // router.post("/manage-listings/:id/delete", isAdmin, deleteListing);
 
-
-
 // // View Listing Details
-
-
-
 
 router.get("/listings/:id", isAdmin, viewListing);
 
@@ -112,4 +107,6 @@ router.get("/profile", isAdminLoggedIn, (req, res) => {
 });
 
 router.get("/analytics", isAdmin, renderAdminAnalytics);
+router.get('/bookings', isAdminLoggedIn, viewBookings);
+
 module.exports = router;

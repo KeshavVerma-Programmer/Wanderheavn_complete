@@ -39,21 +39,37 @@ module.exports.logout = (req, res, next) => {
 // ==========================
 module.exports.adminDashboard = async (req, res) => {
     try {
-        const [totalUsers, totalListings, totalReviews, pendingReviews, totalHosts] = await Promise.all([
+        const [
+            totalUsers,
+            totalListings,
+            totalReviews,
+            pendingReviews,
+            totalHosts,
+            totalBookings // ✅ Add this
+        ] = await Promise.all([
             User.countDocuments({}),
             Listing.countDocuments({}),
             Review.countDocuments({}),
             Review.countDocuments({ status: "Pending" }),
-            Host.countDocuments({}) // Ensure correct host count
+            Host.countDocuments({}),
+            Booking.countDocuments({}) // ✅ Count total bookings
         ]);
 
-        res.render("admin/dashboard", { totalUsers, totalListings, totalReviews, pendingReviews, totalHosts }); 
+        res.render("admin/dashboard", {
+            totalUsers,
+            totalListings,
+            totalReviews,
+            pendingReviews,
+            totalHosts,
+            totalBookings // ✅ Pass to EJS
+        }); 
     } catch (error) {
         console.error("Dashboard Error:", error);
         req.flash("error", "Failed to load dashboard data.");
         res.redirect("/admin/login");
     }
 };
+
 
 // ==========================
 // MANAGE USERS
@@ -478,5 +494,23 @@ module.exports.renderAdminAnalytics = async (req, res) => {
         console.error("Admin Analytics Error:", error);
         req.flash("error", "Failed to load analytics.");
         res.redirect("/admin/dashboard");
+    }
+};
+module.exports.viewBookings = async (req, res) => {
+    try {
+        const bookings = await Booking.find({})
+            .populate({
+                path: "property",
+                populate: {
+                    path: "owner",
+                    model: "Host" // ✅ This must match your model name exactly
+                }
+            })
+            .populate("guest");
+
+        res.render("admin/bookings", { bookings });
+    } catch (err) {
+        console.error("Error fetching bookings for admin:", err);
+        res.status(500).send("Error loading bookings");
     }
 };

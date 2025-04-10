@@ -1,0 +1,59 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-uppercase fw-bold">All Bookings</h2>
+
+    <% if (bookings.length > 0) { %>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Property</th>
+                        <th>Guest</th>
+                        <th>Host</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Status</th>
+                        <th>Total Price</th>
+                        <th>Host Earning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% bookings.forEach(booking => { %>
+                        <%
+                            const checkIn = new Date(booking.bookedDates[0]);
+                            const rawCheckOut = new Date(booking.bookedDates[booking.bookedDates.length - 1]);
+                            const checkOut = new Date(rawCheckOut);
+                            checkOut.setDate(checkOut.getDate() + 1);
+                        %>
+                        <tr>
+                            <td><%= booking.property ? booking.property.title : "Unknown Property" %></td>
+                            <td><%= booking.guest ? booking.guest.username : "Unknown Guest" %></td>
+                            <td>
+                                <%= booking.property && booking.property.owner 
+                                    ? booking.property.owner.username 
+                                    : "Unknown Host" %>
+                            </td>
+                            
+                            <td><%= checkIn.toLocaleDateString('en-IN') %></td>
+                            <td><%= checkOut.toLocaleDateString('en-IN') %></td>
+                            <td>
+                                <span class="badge 
+                                    <%= booking.status === 'Paid' ? 'bg-success' 
+                                    : booking.status === 'Pending' ? 'bg-warning' 
+                                    : 'bg-danger' %>">
+                                    <%= booking.status %>
+                                </span>
+                            </td>
+                            <td>₹<%= booking.totalPrice.toLocaleString("en-IN") %></td>
+                            <td>₹<%= booking.amountPaid.toLocaleString("en-IN") %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <p class="text-center text-warning">No bookings available.</p>
+    <% } %>
+</div>
+<a href="/admin/dashboard" class="btn btn-secondary">Back</a>
