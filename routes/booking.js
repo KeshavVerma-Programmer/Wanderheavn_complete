@@ -18,11 +18,11 @@ router.post('/cleanup', async (req, res) => {
     }
 
     await Booking.deleteOne({ _id: booking._id });
-    console.log(`❌ Pending booking deleted: ${booking._id}`);
+    console.log(` Pending booking deleted: ${booking._id}`);
 
     return res.json({ success: true, message: "Pending booking deleted." });
   } catch (err) {
-    console.error("❌ Cleanup error:", err);
+    console.error("Cleanup error:", err);
     return res.status(500).json({ success: false, message: "Server error during cleanup." });
   }
 });

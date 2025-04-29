@@ -3,7 +3,6 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4 text-uppercase fw-bold text-primary">Manage Hosts</h2>
 
-    <!-- Search Bar -->
     <div class="row mb-4">
         <div class="col-md-6 offset-md-3">
             <input 
@@ -61,7 +60,6 @@
 <br><br>
 <a href="/admin/dashboard" class="btn btn-secondary">Back</a>
 <script>
-    // Search Filter Functionality
     document.getElementById('searchInput').addEventListener('keyup', function () {
         const filter = this.value.toLowerCase();
         document.querySelectorAll('#userTable tbody tr').forEach(row => {
@@ -71,16 +69,15 @@
         });
     });
 
-    // Delete Confirmation
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".delete-host").forEach((button) => {
             button.addEventListener("click", function (event) {
-                event.preventDefault(); // Prevent default form submission
+                event.preventDefault(); 
                 
-                let username = this.getAttribute("data-username"); // Get the username
+                let username = this.getAttribute("data-username"); 
                 
                 if (confirm(`Are you sure you want to delete the user: "${username}"?`)) {
-                    this.closest("form").submit(); // Submit the correct form
+                    this.closest("form").submit(); 
                 }
             });
         });

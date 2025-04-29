@@ -7,7 +7,6 @@
       animation: fadeIn 0.8s ease-in-out forwards;
   }
 
-  /* Keyframes for Fade-In */
   @keyframes fadeIn {
       from {
           opacity: 0;
@@ -48,12 +47,11 @@
   }
 
   .filter i {
-    font-size: 18px; /* Icon size */
+    font-size: 18px; 
   }
   
 </style>
 
-<!-- Filters and Price Range in One Row -->
 <div id="filter-container">
   <div id="filters">
     <% const filters = [
@@ -80,7 +78,6 @@
   </div>
 </div>
 
-<!-- Listings Section -->
 <div class="row row-cols-lg-3 row-cols-md-4 row-cols-sm-1 mt-3">
   <% if (allListings.length === 0) { %>
     <p class="text-center">No listings found.</p>
@@ -103,7 +100,6 @@
   <% } %>
 </div> 
 
-<!-- Price Range Script -->
 <script>
   
   document.addEventListener("DOMContentLoaded", () => {

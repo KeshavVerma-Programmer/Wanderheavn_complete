@@ -1,11 +1,10 @@
 <% layout("/layouts/boilerplate") %>
 
-<!-- Bootstrap Datepicker CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
 <style>
     .datepicker-dropdown {
-        z-index: 1050 !important; /* Ensure it appears above modals */
+        z-index: 1050 !important; 
     }
 </style>
 
@@ -52,7 +51,6 @@
     <a href="/listings/<%= listing._id %>" class="btn btn-secondary">Back</a>
 </div>
 <br>
-<!-- Bootstrap & Datepicker Scripts -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
@@ -110,7 +108,7 @@
 
         $ageCheck.on("change", updateButtonState);
 
-        console.log("✅ Booking form with age check ready.");
+        console.log("Booking form with age check ready.");
     });
 </script>
 

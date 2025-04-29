@@ -19,7 +19,7 @@ module.exports.listingSchema = Joi.object({
       .valid("apartment", "house", "villa", "cabin", "hotel", "bungalow", "hostel", "resort", "camping","cave", "container", "chalet", "room", "treehouse", "igloo", "other")
          .insensitive()
          .required(),
-      owner: Joi.string().required(), // ✅ Owner should be a string
+      owner: Joi.string().required(), 
       checkInTime: Joi.string().required(),
       checkOutTime: Joi.string().required(),
       geometry: Joi.object({

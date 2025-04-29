@@ -57,7 +57,7 @@
     <form action="/listings/<%= listing._id %>/reviews" method="POST">
       <label>Rating:</label>
       <div class="starability-slot">
-        <input type="radio" id="rate1" name="review[rating]" value="1" checked><label for="rate1">★</label> <!-- Default -->
+        <input type="radio" id="rate1" name="review[rating]" value="1" checked><label for="rate1">★</label> 
         <input type="radio" id="rate2" name="review[rating]" value="2"><label for="rate2">★★</label>
         <input type="radio" id="rate3" name="review[rating]" value="3"><label for="rate3">★★★</label>
         <input type="radio" id="rate4" name="review[rating]" value="4"><label for="rate4">★★★★</label>
@@ -83,15 +83,12 @@
       <p class="starability-result" data-rating="<%= review.rating %>"> </p>
       <p><%= review.comment %></p>
       
-      <!-- Show "Delete" button if:
-           1. The user wrote the review
-           2. The host of the listing is viewing the review -->
+      
            <% if (currUser && review && review.author) { 
             let isReviewAuthor = review.author._id && review.author._id.toString() === currUser._id.toString();
             let isListingOwner = listing.owner && listing.owner._id && listing.owner._id.toString() === currUser._id.toString();
         %>
         
-            <!-- ✅ Only Show Delete Button if User is Author or Host (Admin Excluded on /listings) -->
             <% if ((isReviewAuthor || (currUser.role === 'host' && isListingOwner)) && currUser.role !== 'admin') { %>
                 <% if (currUser.role === "host") { %>
                     <form action="/host/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="d-inline">
@@ -111,7 +108,6 @@
 </div>
 </div>
 </div>
-<!-- Map Section -->
 <div class="col-md-8 offset-md-3 mt-4">
   <h3>Where <%= listing.title %></h3>
   <div id="map" style="height: 400px;"></div>

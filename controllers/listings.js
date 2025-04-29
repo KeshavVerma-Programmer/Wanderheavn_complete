@@ -23,7 +23,7 @@ const listingSchema = Joi.object({
           .valid("apartment", "house", "villa", "cabin", "hotel", "bungalow", "hostel", "resort", "camping","cave", "container", "chalet", "room", "treehouse", "igloo", "other")
           .insensitive()
           .required(),
-       owner: Joi.string().required(), // ✅ Owner should be a string
+       owner: Joi.string().required(), 
        checkInTime: Joi.string().required(),
        checkOutTime: Joi.string().required(),
        geometry: Joi.object({
@@ -62,18 +62,16 @@ const formatTime = (timeString) => {
             path: "reviews",
             populate: { path: "author", select: "username" }
         })
-        .populate("owner", "_id username role")  // ✅ Ensure owner is populated
+        .populate("owner", "_id username role") 
         .lean();
 
     if (!listing) {
         req.flash("error", "Listing not found.");
         return res.redirect("/listings");
     }
-       // ✅ Default values to prevent undefined errors
     listing.formattedCheckInTime = listing.checkInTime || "Not Provided";
     listing.formattedCheckOutTime = listing.checkOutTime || "Not Provided";
      
-   
     res.render("listings/show", { listing, currUser: req.user });
 };
 
@@ -90,10 +88,9 @@ module.exports.createListing = async (req, res, next) => {
 
         console.log("Creating listing for user:", req.user);
 
-        // ✅ Assign owner as a string
-        req.body.listing.owner = req.user._id.toString(); // ✅ Store as string, not ObjectId
+        req.body.listing.owner = req.user._id.toString(); 
 
-        // Convert category to lowercase
+        
         if (req.body.listing.category) {
             req.body.listing.category = req.body.listing.category.toLowerCase();
         }
@@ -106,7 +103,7 @@ module.exports.createListing = async (req, res, next) => {
             return res.redirect("/host/addListing");
         }
 
-        let coordinates = [0, 0]; // Default coordinates
+        let coordinates = [0, 0]; 
         try {
             const geoResponse = await fetch(`https://api.maptiler.com/geocoding/${encodeURIComponent(location)}.json?key=${mapToken}`);
             const geoData = await geoResponse.json();
@@ -137,7 +134,6 @@ module.exports.createListing = async (req, res, next) => {
 
         console.log("Final Geometry:", req.body.listing.geometry);
 
-        // ✅ Validate using Joi schema
         const { error } = listingSchema.validate(req.body);
         if (error) {
             console.log("Validation Error:", error.details);
@@ -145,7 +141,6 @@ module.exports.createListing = async (req, res, next) => {
             return res.redirect("/host/addListing");
         }
 
-        // ✅ Create and save listing (No need to convert owner again)
         const newListing = new Listing({
             ...req.body.listing,
             images: req.files ? req.files.map(file => ({ url: file.path, filename: file.filename })) : [],

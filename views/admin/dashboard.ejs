@@ -10,7 +10,6 @@
   #field{
     margin-top: 100px;
   }
-  /* Keyframes for Fade-In */
   @keyframes fadeIn {
       from {
           opacity: 0;
@@ -27,7 +26,6 @@
     <h1 class="text-center mb-4 text-uppercase fw-bold">Admin Dashboard</h1>
 
     <div class="row row-cols-1 row-cols-md-4 g-4" id="field">
-        <!-- Total Users -->
         <div class="col">
             <div class="card shadow-sm p-3 mb-3 border-primary">
                 <h5 class="card-title"><i class="fas fa-users me-2"></i> Total Users</h5>
@@ -36,7 +34,6 @@
             </div>
         </div>
 
-        <!-- Total Hosts -->
         <div class="col">
             <div class="card shadow-sm p-3 mb-3 border-success">
                 <h5 class="card-title"><i class="fas fa-user-tie me-2"></i> Total Hosts</h5>
@@ -45,7 +42,6 @@
             </div>
         </div>
 
-        <!-- Total Listings -->
         <div class="col">
             <div class="card shadow-sm p-3 mb-3 border-warning">
                 <h5 class="card-title"><i class="fas fa-home me-2"></i> Total Listings</h5>
@@ -54,7 +50,6 @@
             </div>
         </div>
 
-        <!-- Total Reviews -->
         <div class="col">
             <div class="card shadow-sm p-3 mb-3 border-danger">
                 <h5 class="card-title"><i class="fas fa-comment-dots me-2"></i> Total Reviews</h5>
@@ -64,7 +59,6 @@
         </div>
     </div>
 
-    <!-- Total Bookings -->
     <div class="col">
         <div class="card shadow-sm p-3 mb-3 border-danger">
             <h5 class="card-title"><i class="fas fa-calendar-check me-2"></i> <i>Total Bookings</i></h5>
@@ -73,7 +67,6 @@
         </div>
     </div>
 
-    <!-- System Analytics - Full Width -->
     <div class="row" id="analytics">
         <div class="col-12">
             <div class="card shadow-sm p-4 border-info">
@@ -85,7 +78,6 @@
     </div>
 </div>
 
-<!-- Hover Effect Script -->
 <script>
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('mouseenter', () => {

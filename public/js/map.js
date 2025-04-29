@@ -1,4 +1,4 @@
-import { Map, Marker, Popup } from 'maplibre-gl'; // Correct v5.x import
+import { Map, Marker, Popup } from 'maplibre-gl'; 
 
 document.addEventListener("DOMContentLoaded", () => {
     if (listing?.geometry?.coordinates) {

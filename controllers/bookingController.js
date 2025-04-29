@@ -298,25 +298,35 @@ module.exports.verifyPayment = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error." });
     }
 };
+const { sendBookingConfirmationEmail } = require('../services/emailService');  // Import the email service
 
 module.exports.getConfirmationPage = async (req, res) => {
-    const { bookingId } = req.query;
+  const { bookingId } = req.query;
 
-    if (!bookingId) {
-        req.flash("error", "Invalid booking.");
-        return res.redirect("/listings");
-    }
+  if (!bookingId) {
+    req.flash("error", "Invalid booking.");
+    return res.redirect("/listings");
+  }
 
-    const booking = await Booking.findById(bookingId)
-        .populate({ path: "host", select: "username email" }) 
-        .populate({ path: "guest", select: "username email" })
-        .populate("property");
+  const booking = await Booking.findById(bookingId)
+    .populate({ path: "host", select: "username email" })
+    .populate({ path: "guest", select: "username email" })
+    .populate("property");
 
-    if (!booking) {
-        req.flash("error", "Booking not found.");
-        return res.redirect("/listings");
-    }
+  if (!booking) {
+    req.flash("error", "Booking not found.");
+    return res.redirect("/listings");
+  }
 
-    console.log(`📢 Booking ${bookingId} details loaded.`);
-    res.render("bookings/confirmation", { booking, currUser: req.user });
+  console.log(`📢 Booking ${bookingId} details loaded.`);
+
+  // Send booking confirmation email to the guest
+  try {
+    await sendBookingConfirmationEmail(booking.guest.email, booking);
+    console.log('Booking confirmation email sent.');
+  } catch (error) {
+    console.error('Failed to send booking confirmation email:', error);
+  }
+
+  res.render("bookings/confirmation", { booking, currUser: req.user });
 };

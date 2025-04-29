@@ -1,13 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Hide full-page loader after the page is fully loaded
     const fullPageLoader = document.getElementById("fullPageLoader");
     if (fullPageLoader) {
         setTimeout(() => {
             fullPageLoader.classList.add("hidden");
-        }, 500); // Slight delay for smoother transition
+        }, 500); 
     }
 
-    // Form submission spinner
     document.querySelectorAll("form").forEach(form => {
         form.addEventListener("submit", (event) => {
             const submitButton = form.querySelector("button[type='submit']");

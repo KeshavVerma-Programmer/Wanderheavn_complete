@@ -10,13 +10,13 @@
             let successMessage = "<%= success %>";
 
             if (successMessage && 'speechSynthesis' in window) {
-                speechSynthesis.cancel(); // Stop any previous speech
+                speechSynthesis.cancel(); 
 
                 let utterance = new SpeechSynthesisUtterance(successMessage);
                 utterance.lang = "en-US";
-                utterance.rate = 1;  // Normal speed
-                utterance.volume = 1; // Full volume
-                utterance.pitch = 1.1; // Slightly soft tone
+                utterance.rate = 1;  
+                utterance.volume = 1; 
+                utterance.pitch = 1.1; 
 
                 function speakMessage() {
                     let voices = speechSynthesis.getVoices();
@@ -24,7 +24,7 @@
                         voice.name.includes("Google") && voice.lang.includes("en")
                     );
 
-                    utterance.voice = googleVoice || voices[0]; // Use Google voice if available, otherwise default
+                    utterance.voice = googleVoice || voices[0]; 
                     speechSynthesis.speak(utterance);
                 }
 
@@ -33,7 +33,7 @@
                 } else {
                     speechSynthesis.onvoiceschanged = function () {
                         speakMessage();
-                        speechSynthesis.onvoiceschanged = null; // Remove listener after first execution
+                        speechSynthesis.onvoiceschanged = null; 
                     };
                 }
             }
@@ -50,14 +50,13 @@
 <% } %>
 
 <script>
-    // Auto-dismiss alerts after 3 seconds
     document.addEventListener("DOMContentLoaded", function () {
         const alerts = document.querySelectorAll(".alert");
         alerts.forEach(alert => {
             setTimeout(() => {
                 alert.classList.remove("show");
                 alert.classList.add("fade");
-            }, 3000); // Auto-dismiss after 3 seconds
+            }, 3000); 
         });
     });
 </script>

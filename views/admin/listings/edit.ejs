@@ -16,7 +16,6 @@
         <div class="invalid-feedback">Please enter a short description</div>
       </div>
 
-      <!-- Category Field -->
       <div class="mb-3">
         <label for="category" class="form-label">Category</label>
         <select id="category" name="listing[category]" class="form-select" required>
@@ -36,7 +35,6 @@
         <div class="invalid-feedback">Please select a category</div>
       </div>
 
-   <!-- Existing Images -->
 <div class="mb-3">
   <label class="form-label">Current Images</label><br>
   <% if (listing.images && listing.images.length > 0) { %>
@@ -47,7 +45,6 @@
     <p>No images uploaded.</p>
   <% } %>
 </div>
-      <!-- Upload New Image -->
       <div class="mb-3">
         <label for="image" class="form-label">Upload New Image</label>
         <input id="image" name="listing[images]" type="file" class="form-control" />
@@ -72,14 +69,12 @@
         <input id="location" name="listing[location]" type="text" class="form-control" value="<%= listing.location %>" required />
         <div class="invalid-feedback">Location should be valid</div>
     
-        <!-- Hidden input fields for coordinates -->
         <input type="hidden" name="listing[geometry][type]" value="Point">
         <input type="hidden" id="latitude" name="listing[geometry][coordinates][1]" value="<%= listing.geometry.coordinates[1] %>">
         <input type="hidden" id="longitude" name="listing[geometry][coordinates][0]" value="<%= listing.geometry.coordinates[0] %>">
       </div>
 
       <div class="row">
-        <!-- Check-in Time -->
         <div class="mb-3 col-md-6">
           <label for="checkInTime" class="form-label"><i class="bi bi-door-open"></i> Check-in Time</label>
           <div class="input-group">
@@ -89,7 +84,6 @@
           <div class="invalid-feedback">Please select a check-in time.</div>
         </div>
       
-        <!-- Check-out Time -->
         <div class="mb-3 col-md-6">
           <label for="checkOutTime" class="form-label"><i class="bi bi-door-closed"></i> Check-out Time</label>
           <div class="input-group">
@@ -108,7 +102,7 @@
 <script>
   document.getElementById("location").addEventListener("change", async function () {
       const location = this.value;
-      const mapToken = "6Z8EerHHhFtWsqh3cfqv"; // Replace with your actual MapTiler API key
+      const mapToken = "6Z8EerHHhFtWsqh3cfqv"; 
       const geoUrl = `https://api.maptiler.com/geocoding/${encodeURIComponent(location)}.json?key=${mapToken}`;
 
       try {
@@ -118,15 +112,14 @@
           if (data.features && data.features.length > 0) {
               const [longitude, latitude] = data.features[0].geometry.coordinates;
               
-              // Set hidden inputs
               document.getElementById("latitude").value = latitude;
               document.getElementById("longitude").value = longitude;
-              console.log(`📍 Updated Coordinates: Latitude = ${latitude}, Longitude = ${longitude}`);
+              console.log(`Updated Coordinates: Latitude = ${latitude}, Longitude = ${longitude}`);
           } else {
               alert("Could not fetch coordinates. Try another location.");
           }
       } catch (error) {
-          console.error("❌ Error fetching coordinates:", error);
+          console.error("Error fetching coordinates:", error);
           alert("Failed to fetch coordinates. Check your internet connection or API key.");
       }
   });

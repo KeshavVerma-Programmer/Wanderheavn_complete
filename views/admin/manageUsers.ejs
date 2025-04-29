@@ -3,7 +3,6 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4 text-uppercase fw-bold text-success">Manage Users</h2>
 
-    <!-- Search Bar -->
     <div class="row mb-3">
         <div class="col-md-6 offset-md-3">
             <input 
@@ -40,7 +39,6 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <!-- Delete User Button with Confirmation -->
                                 <button type="button" 
                                         class="btn btn-sm btn-danger delete-user" 
                                         data-user-id="<%= user._id %>" 
@@ -62,7 +60,6 @@
 <br><br>
 <a href="/admin/dashboard" class="btn btn-secondary">Back</a>
 <script>
-    // Delete Confirmation
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".delete-user").forEach((button) => {
             button.addEventListener("click", function () {
@@ -78,7 +75,6 @@
         });
     });
 
-    // Search Filter Functionality
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('keyup', function() {
         const filter = searchInput.value.toLowerCase();

@@ -7,26 +7,21 @@ const axios = require("axios");
 const mapToken = process.env.MAP_TOKEN;
 const Review=require("../models/review");
 
-// ==========================
-// HOST SIGNUP
-// ==========================
 module.exports.renderHostSignupForm = (req, res) => {
     res.render("hosts/signup", { username: "", email: "", phone: "" });
 };
 
 module.exports.hostSignup = async (req, res, next) => {
-    console.log("Received Data:", req.body); // Debugging
+    console.log("Received Data:", req.body); 
 
     const { username, email, phone, password } = req.body;
 
     try {
-        // ✅ Username must be at least 5 characters
         if (username.length < 5) {
             req.flash("error", "Username must be at least 5 characters long.");
             return res.redirect("/host/signup");
         }
 
-        // ✅ Password must be at least 6 characters and contain a special character
         if (password.length < 6) {
             req.flash("error", "Password must be at least 6 characters long.");
             return res.redirect("/host/signup");
@@ -40,14 +35,14 @@ module.exports.hostSignup = async (req, res, next) => {
             username, 
             email, 
             phone,
-            role: "host",  // Ensure role is assigned
+            role: "host",  
         });
 
         const registeredHost = await Host.register(newHost, password);
 
         req.login(registeredHost, (err) => {
             if (err) return next(err);
-            console.log("Logged in user:", req.user); // Debugging
+            console.log("Logged in user:", req.user); 
             req.flash("success", "Welcome to WanderHeavn as a Host!");
             return res.redirect("/host/dashboard");
         });
@@ -55,7 +50,6 @@ module.exports.hostSignup = async (req, res, next) => {
     } catch (error) {
         console.error("Signup Error:", error);
 
-        // ✅ Handle duplicate key errors (MongoDB error code 11000)
         if (error.code === 11000 && error.keyPattern) {
             if (error.keyPattern.email) {
                 req.flash("error", "This email is already registered. Try another one.");
@@ -67,15 +61,12 @@ module.exports.hostSignup = async (req, res, next) => {
                 req.flash("error", "Duplicate value detected. Please try again.");
             }
         } 
-        // ✅ Handle password-related errors from Passport
         else if (error.name === "UserExistsError") {
             req.flash("error", "This username is already taken. Try another.");
         } 
-        // ✅ Handle email format errors
         else if (error.errors?.email?.message) {
             req.flash("error", "Invalid email format. Please enter a valid email.");
         }
-        // ✅ General error fallback
         else {
             req.flash("error", "Something went wrong. Please check your details and try again.");
         }
@@ -84,15 +75,12 @@ module.exports.hostSignup = async (req, res, next) => {
     }
 };
 
-// ==========================
-// HOST LOGIN
-// ==========================
 module.exports.renderHostLoginForm = (req, res) => {
     res.render("hosts/login");
 };
 
 module.exports.hostLogin = (req, res) => {
-    console.log("Authenticated User in Login:", req.user); // Debugging
+    console.log("Authenticated User in Login:", req.user); 
 
     if (!req.user) {
         req.flash("error", "Invalid username/email or password. Please try again.");
@@ -108,17 +96,12 @@ module.exports.hostLogin = (req, res) => {
     res.redirect("/host/dashboard");
 };
 
-// ==========================
-// DASHBOARD
-// ==========================
 module.exports.renderDashboard = async (req, res) => {
     try {
         const totalListings = await Listing.countDocuments({ owner: req.user._id });
 
-        // Count only successfully paid bookings
         const activeBookings = await Booking.countDocuments({ host: req.user._id, status: "Paid" });
 
-        // Get total earnings from paid bookings
         const bookings = await Booking.find({ host: req.user._id, status: "Paid" });
         const totalEarnings = bookings.reduce((sum, booking) => sum + (booking.amountPaid || 0), 0);
 
@@ -130,17 +113,13 @@ module.exports.renderDashboard = async (req, res) => {
     }
 };
 
-
-// ==========================
-// MANAGE LISTINGS
-// ==========================
 module.exports.manageListings = async (req, res) => {
     const listings = await Listing.find({ owner: req.user._id });
     res.render("host/manageListings", { listings });
 };
 
 module.exports.addListing = async (req, res) => {
-    console.log("Request Body:", req.body); // Debug incoming data
+    console.log("Request Body:", req.body); 
 
     if (!req.user || req.user.role !== "host") {  
         req.flash("error", "Only hosts can create listings.");  
@@ -163,16 +142,11 @@ module.exports.addListing = async (req, res) => {
     }
 };
 
-// ==========================
-// MANAGE BOOKINGS
-// ==========================
-
 module.exports.manageBookings = async (req, res) => {
     try {
         const bookings = await Booking.find({ host: req.user._id })
-            .populate("property") // ✅ Ensure property details are included
-            .populate("guest");  // ✅ Populate guest details too if needed
-
+            .populate("property") 
+            .populate("guest");  
         res.render("host/manageBookings", { bookings });
     } catch (err) {
         console.error("Error fetching bookings:", err);
@@ -181,10 +155,6 @@ module.exports.manageBookings = async (req, res) => {
     }
 };
 
-
-// ==========================
-// LOGOUT
-// ==========================
 module.exports.logout = (req, res, next) => {
     req.logout((err) => {
         if (err) {
@@ -207,7 +177,7 @@ module.exports.destroyListing = async (req, res) => {
     req.flash("success", "Listing Deleted!");
     res.redirect("/listings");
 };
-// Function to get coordinates using MapTiler
+
 async function geocodeLocation(location) {
     try {
         const geoUrl = `https://api.maptiler.com/geocoding/${encodeURIComponent(location)}.json?key=${mapToken}`;
@@ -220,7 +190,7 @@ async function geocodeLocation(location) {
             throw new Error("No coordinates found for the given location.");
         }
     } catch (error) {
-        console.error("❌ Geocoding Error:", error);
+        console.error(" Geocoding Error:", error);
         return null;
     }
 }
@@ -234,7 +204,7 @@ module.exports.renderEditForm = async (req, res) => {
         }
         res.render("host/listings/edit", { listing });
     } catch (error) {
-        console.error("❌ Error rendering edit form:", error);
+        console.error(" Error rendering edit form:", error);
         req.flash("error", "Something went wrong.");
         res.redirect("/host/listings");
     }
@@ -250,46 +220,39 @@ module.exports.updateListing = async (req, res) => {
             return res.redirect("/host/listings");
         }
 
-        // Update text fields (title, description, etc.)
         listing.set(req.body.listing);
 
-        // Handle Image Upload
         if (req.file) {
-            // Delete old images from Cloudinary
             if (listing.images && listing.images.length > 0) {
                 for (let img of listing.images) {
                     await cloudinary.uploader.destroy(img.filename);
                 }
             }
 
-            // Assign new image
             listing.images = [{ url: req.file.path, filename: req.file.filename }];
         }
 
-        // Handle Geocoding with MapTiler
         if (req.body.listing.location) {
             const geoData = await geocodeLocation(req.body.listing.location);
             if (geoData) {
-                listing.geometry = geoData; // Store coordinates
+                listing.geometry = geoData; 
             }
         }
 
-        // **Save the updated listing**
         await listing.save();
-
         req.flash("success", "Listing updated successfully!");
         res.redirect("/listings");
     } catch (error) {
-        console.error("❌ Error updating listing:", error);
+        console.error(" Error updating listing:", error);
         req.flash("error", "Something went wrong while updating.");
         res.redirect(`/host/listings/${id}/edit`);
     }
 };
+
 module.exports.deleteReviewAsHost = async (req, res) => {
     try {
         const { listingId, reviewId } = req.params;
 
-        // Find the listing and review
         const listing = await Listing.findById(listingId);
         const review = await Review.findById(reviewId);
 
@@ -298,13 +261,11 @@ module.exports.deleteReviewAsHost = async (req, res) => {
             return res.redirect(`/listings/${listingId}`);
         }
 
-        // Ensure host owns the listing
         if (req.user.role !== "admin" && (!listing.owner.equals(req.user._id))) {
             req.flash("error", "You are not authorized to delete this review.");
             return res.redirect(`/listings/${listingId}`);
         }
 
-        // Delete review from listing
         await Listing.findByIdAndUpdate(listingId, { $pull: { reviews: reviewId } });
         await Review.findByIdAndDelete(reviewId);
 
@@ -355,17 +316,16 @@ module.exports.viewListing = async (req, res) => {
     try {
         const { id } = req.params;
         const listing = await Listing.findById(id)
-            .populate("owner")  // Populate owner details
+            .populate("owner")  
             .populate({
                 path: "reviews",
-                populate: { path: "author", select: "username" } // Ensure author details are populated
+                populate: { path: "author", select: "username" } 
             });
 
         if (!listing) {
             req.flash("error", "Listing not found!");
             return res.redirect("/host/listings");
         }
-        // ✅ Default values to prevent undefined errors
     listing.formattedCheckInTime = listing.checkInTime || "Not Provided";
     listing.formattedCheckOutTime = listing.checkOutTime || "Not Provided";
 

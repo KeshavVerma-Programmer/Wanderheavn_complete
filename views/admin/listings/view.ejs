@@ -48,17 +48,12 @@
     <p><strong>Check-in - </strong> <%= listing.checkInTime %> | <strong>Check-out:</strong> <%= listing.checkOutTime %></p>
   </div>
 </div>
-  <!-- <div id="map" class="map-container"> -->
-<!-- Reviews Section -->
 
-
-<!-- Map Section -->
 <div class="col-md-8 offset-md-2 mt-4">
     <h3>Where <%= listing.title %></h3>
     <div id="map" style="height: 400px;"></div>
-  </div>
+</div>
   
- 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       if (listing.geometry && listing.geometry.coordinates) {

@@ -1,21 +1,6 @@
-// const mongoose = require("mongoose");
-// const Admin = require("../models/admin");
-
-// mongoose.connect("mongodb://127.0.0.1:27017/wanderheavn");
-
-// const seedAdmin = async () => {
-//     const admin = new Admin({ username: "admin" });
-//     await Admin.register(admin, "admin123"); // Password: admin123
-//     console.log("Admin created successfully!");
-//     mongoose.connection.close();
-// };
-
-// seedAdmin();
-
-
 const mongoose = require('mongoose');
-const Admin = require("../models/admin.js"); // Assuming Admin model is defined
-const dbUrl = "mongodb://localhost:27017/wanderheavn"; // Replace with your DB URL
+const Admin = require("../models/admin.js"); 
+const dbUrl = "mongodb://localhost:27017/wanderheavn"; 
 
 mongoose.connect(dbUrl)
     .then(() => console.log("MongoDB Connected Successfully!"))
@@ -35,7 +20,7 @@ const seedAdmin = async () => {
             role: "admin"
         });
 
-        await Admin.register(admin, "admin123"); // Use `passport-local-mongoose` for hashing
+        await Admin.register(admin, "admin123"); 
         console.log("Admin seeded successfully!");
     } catch (err) {
         console.error("Error seeding admin:", err);
@@ -43,7 +28,6 @@ const seedAdmin = async () => {
         mongoose.connection.close();
     }
 };
-
 seedAdmin();
 
 

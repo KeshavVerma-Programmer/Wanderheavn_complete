@@ -5,7 +5,6 @@
     animation: fadeIn 0.8s ease-in-out forwards;
 }
 
-/* Keyframes for Fade-In */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -21,7 +20,6 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4 text-uppercase fw-bold">Host Dashboard</h1>
 
-    <!-- Quick Stats Section -->
     <div class="row g-4 text-center">
         <div class="col-md-4">
             <div class="card shadow-sm p-3 bg-primary text-white">
@@ -45,9 +43,7 @@
         </div>
     </div>
 
-    <!-- Action Cards -->
     <div class="row mt-4">
-        <!-- Add New Listing -->
         <div class="col-md-4">
             <div class="card shadow-sm p-3 mb-3 border-warning">
                 <h5 class="card-title">
@@ -58,7 +54,6 @@
             </div>
         </div>
 
-        <!-- Manage Bookings -->
         <div class="col-md-4">
             <div class="card shadow-sm p-3 mb-3 border-success">
                 <h5 class="card-title">
@@ -69,7 +64,6 @@
             </div>
         </div>
 
-        <!-- View Listings -->
         <div class="col-md-4">
             <div class="card shadow-sm p-3 mb-3 border-warning">
                 <h5 class="card-title">
@@ -81,7 +75,6 @@
         </div>
     </div>
 
-    <!-- Analytics Section -->
     <div class="row mt-4">
         <div class="col-12 border-info">
             <div class="card shadow-sm p-3 border-info">
@@ -96,7 +89,6 @@
 </div>
 
 <script>
-    // Subtle Hover Animations
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('mouseenter', () => {
             card.classList.add('shadow-lg');

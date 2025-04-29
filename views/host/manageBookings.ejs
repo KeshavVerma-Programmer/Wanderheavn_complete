@@ -2,7 +2,6 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4 text-uppercase fw-bold">My Bookings</h2>
 
-    <!-- Search & Filter Section -->
     <div class="mb-3 d-flex justify-content-between align-items-center">
         <input
             type="text"
@@ -42,7 +41,7 @@
                                 const checkIn = new Date(booking.bookedDates[0]);
                                 const rawCheckOut = new Date(booking.bookedDates[booking.bookedDates.length - 1]);
                                 const checkOut = new Date(rawCheckOut);
-                                checkOut.setDate(checkOut.getDate() + 1); // ✅ Adjust checkout day
+                                checkOut.setDate(checkOut.getDate() + 1); 
                             %>
                             <td><%= checkIn.toLocaleDateString('en-IN') %></td>
                             <td><%= checkOut.toLocaleDateString('en-IN') %></td>
@@ -74,7 +73,6 @@
 <a href="/host/dashboard" class="btn btn-secondary">Back</a>
 
 <script>
-    // Search & Filter Functionality
     document.getElementById("bookingSearch").addEventListener("input", filterBookings);
     document.getElementById("statusFilter").addEventListener("change", filterBookings);
 

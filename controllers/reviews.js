@@ -3,7 +3,7 @@ const Review = require("../models/review");
 
 module.exports.createReview = async (req, res) => {
     try {
-        console.log("Received Review Data:", req.body.review); // Debugging
+        console.log("Received Review Data:", req.body.review); 
 
         if (!req.body.review || !req.body.review.rating) {
             req.flash("error", "Rating is required!");
@@ -17,7 +17,7 @@ module.exports.createReview = async (req, res) => {
         }
 
         let newReview = new Review({
-            rating: parseInt(req.body.review.rating), // Convert rating to number
+            rating: parseInt(req.body.review.rating), 
             comment: req.body.review.comment,
             author: req.user._id
         });
@@ -40,7 +40,6 @@ module.exports.destroyReview = async (req, res) => {
     try {
         let { id, reviewId } = req.params;
 
-        // Check if the review exists
         const review = await Review.findById(reviewId);
         if (!review) {
             req.flash("error", "Review not found!");

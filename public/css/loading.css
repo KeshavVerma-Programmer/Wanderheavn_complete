@@ -1,4 +1,3 @@
-/* Full Page Loader */
 #fullPageLoader {
     position: fixed;
     width: 100%;
@@ -26,12 +25,10 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Hide loader after page load */
 .hidden {
     display: none;
 }
 
-/* Spinner for Form Submission */
 .submit-btn {
     position: relative;
 }

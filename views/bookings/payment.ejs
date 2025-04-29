@@ -37,7 +37,6 @@
 
     <h3>Total Price: ₹<%= booking.totalPrice.toLocaleString("en-IN") %></h3>
 
-    <!-- ✅ Hidden input field to store booking dates -->
     <input type="hidden" id="bookingDates" name="bookingDates" value="<%= booking.bookedDates.join(',') %>">
 
     <button class="btn btn-success" id="payNowBtn">Proceed to Payment</button>
@@ -51,19 +50,19 @@ async function startPayment() {
         let bookingDatesInput = document.getElementById("bookingDates");
 
         if (!bookingDatesInput) {
-            console.error("❌ Booking Dates element not found!");
-            alert("❌ Booking dates are missing.");
+            console.error("Booking Dates element not found!");
+            alert("Booking dates are missing.");
             return;
         }
 
         let bookingDates = bookingDatesInput.value;
         let listingId = "<%= booking.property._id %>";
 
-        console.log("📢 Sending bookingDates:", bookingDates);
-        console.log("📢 Sending listingId:", listingId);
+        console.log("Sending bookingDates:", bookingDates);
+        console.log("Sending listingId:", listingId);
 
         if (!bookingDates || !listingId) {
-            alert("❌ Missing required fields: bookingDates or listingId.");
+            alert("Missing required fields: bookingDates or listingId.");
             return;
         }
 
@@ -75,14 +74,14 @@ async function startPayment() {
 
         let data = await response.json();
         if (!data.success) {
-            alert("❌ Error creating Razorpay order: " + data.message);
+            alert("Error creating Razorpay order: " + data.message);
             return;
         }
 
-        console.log("✅ Razorpay Order Created:", data);
+        console.log("Razorpay Order Created:", data);
 
         if (!data.orderId) {
-            alert("❌ Missing Order ID from Server.");
+            alert("Missing Order ID from Server.");
             return;
         }
 
@@ -106,17 +105,17 @@ async function startPayment() {
             });
 
             let verifyData = await verifyResponse.json();
-            console.log("✅ Payment Verification Response:", verifyData);
+            console.log("Payment Verification Response:", verifyData);
 
             if (!verifyData.bookingId) {
-                alert("❌ Booking ID is missing from the server response.");
+                alert("Booking ID is missing from the server response.");
                 return;
             }
 
             window.location.href = `/listings/${listingId}/confirmation?bookingId=${verifyData.bookingId}`;
         } catch (error) {
-            console.error("❌ Error verifying payment:", error);
-            alert("❌ Payment verification failed.");
+            console.error("Error verifying payment:", error);
+            alert("Payment verification failed.");
         }
     },modal: {
     ondismiss: function () {
@@ -125,14 +124,14 @@ async function startPayment() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ orderId: data.orderId }) // 👈 important
+            body: JSON.stringify({ orderId: data.orderId }) 
         })
         .then(res => res.json())
         .then(data => {
-            console.log("🧹 Cleanup Response:", data.message);
+            console.log("Cleanup Response:", data.message);
         })
         .catch(err => {
-            console.error("❌ Cleanup failed:", err);
+            console.error("Cleanup failed:", err);
         });
     }
 }
@@ -150,12 +149,11 @@ var rzp1 = new Razorpay(options);
 rzp1.open();
 
     } catch (error) {
-        console.error("❌ Error processing payment:", error);
-        alert("❌ Error processing payment.");
+        console.error("Error processing payment:", error);
+        alert("Error processing payment.");
     }
 }
 
-// ✅ Start payment when button is clicked
 document.getElementById("payNowBtn").addEventListener("click", startPayment);
 
 </script>

@@ -22,17 +22,10 @@ const multer = require("multer");
 const { storage } = require("../cloudConfig");
 const upload = multer({ storage });
 
-const mongoose = require("mongoose"); // For ID validation
-
-// ==========================
-// HOST SIGNUP
-// ==========================
+const mongoose = require("mongoose");
 router.get("/signup", renderHostSignupForm);
 router.post("/signup", wrapAsync(hostSignup));
 
-// ==========================
-// HOST LOGIN
-// ==========================
 router.get("/login", renderHostLoginForm);
 
 router.post("/login", passport.authenticate("host-local", {
@@ -40,41 +33,27 @@ router.post("/login", passport.authenticate("host-local", {
     failureRedirect: "/host/login"
 }), (req, res) => {
     req.flash("success", "Welcome back to WanderHeavn!");
-    req.session.save(() => res.redirect("/host/dashboard")); // Ensure flash message is saved
+    req.session.save(() => res.redirect("/host/dashboard")); 
 });
 
-// ==========================
-// HOST DASHBOARD
-// ==========================
 router.get("/dashboard", isHost, wrapAsync(renderDashboard));
 
-// ==========================
-// MANAGE LISTINGS
-// ==========================
 router.get("/manage-listings", isHost, wrapAsync(manageListings));
 
 router.get("/listings/new", isHost, (req, res) => {
-    res.render("host/addListing"); // Make sure this path matches the actual location of `addListing.ejs`
+    res.render("host/addListing"); 
 });
 router.post("/listings/new", isHost, validateListing, wrapAsync(addListing));
 
-// ==========================
-// MANAGE BOOKINGS
-// ==========================
 router.get("/manage-bookings", isHost, wrapAsync(manageBookings));
 
 router.post("/bookings/:id/approve", isHost, wrapAsync(approveBooking));
 router.post("/bookings/:id/reject", isHost, wrapAsync(rejectBooking));
 
-// ==========================
-// LOGOUT
-// ==========================
 router.post("/logout", logout);
 
-// Host Profile Route
 router.get("/profile", isHost, async (req, res) => {
-    console.log("Current Host:", req.user); // Debugging Line
-
+    console.log("Current Host:", req.user);
     try {
         const host = await Host.findById(req.user._id);
         if (!host) {

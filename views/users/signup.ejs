@@ -8,21 +8,18 @@
                     <h2 class="text-center mb-4 fw-bold text-success">User Signup</h2>
 
                     <form id="signupForm" action="/user/signup" method="post" class="needs-validation" novalidate>
-                        <!-- Username -->
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input name="username" id="username" type="text" class="form-control" minlength="5" placeholder="your username" required/>
                             <div class="invalid-feedback">Username must be at least 5 characters long.</div>
                         </div>
 
-                        <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input name="email" id="email" type="email" class="form-control" placeholder="example@gmail.com" required/>
                             <div class="invalid-feedback">Please enter a valid email.</div>
                         </div>
 
-                        <!-- Phone -->
                         <div class="mb-3">
                             <label for="phone" class="form-label">Contact Number</label>
                             <input 
@@ -37,7 +34,6 @@
                             <div class="invalid-feedback">Enter a valid 10-digit phone number.</div>
                         </div>
 
-                        <!-- Password -->
                         <div class="mb-3 position-relative">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
@@ -59,7 +55,6 @@
                             </div>
                         </div>
 
-                        <!-- Confirm Password -->
                         <div class="mb-3 position-relative">
                             <label for="confirmPassword" class="form-label">Confirm Password</label>
                             <div class="input-group">
@@ -78,14 +73,12 @@
                             <div class="invalid-feedback" id="passwordError">Passwords must match.</div>
                         </div>
 
-                        <!-- Signup Button -->
                         <button id="signupBtn" class="btn btn-success w-100 fw-bold" type="submit">
                             Signup as User
                             <span id="signupSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
                         </button>
                     </form>
 
-                    <!-- Additional Links -->
                     <div class="text-center mt-3">
                         <p>Want to become a host? <a href="/host/signup" class="text-primary fw-bold">Sign up as a Host</a></p>
                         <p>Already have an account? <a href="/user/login" class="text-primary fw-bold">Login here</a></p>
@@ -97,7 +90,6 @@
 </div>
 
 <script>
-    // Show/Hide Password Toggle
     function setupPasswordToggle(toggleId, inputId) {
         const toggleButton = document.getElementById(toggleId);
         const passwordInput = document.getElementById(inputId);
@@ -109,43 +101,50 @@
         });
     }
 
-    // Initialize toggles for both password fields
     setupPasswordToggle("togglePassword", "password");
     setupPasswordToggle("toggleConfirmPassword", "confirmPassword");
 
-    // Form validation + Spinner logic
-    document.getElementById("signupForm").addEventListener("submit", function (event) {
-        const password = document.getElementById("password");
-        const confirmPassword = document.getElementById("confirmPassword");
-        const passwordError = document.getElementById("passwordError");
-        const signupBtn = document.getElementById("signupBtn");
-        const signupSpinner = document.getElementById("signupSpinner");
+    const signupForm = document.getElementById("signupForm");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+    const passwordError = document.getElementById("passwordError");
+    const signupBtn = document.getElementById("signupBtn");
+    const signupSpinner = document.getElementById("signupSpinner");
 
-        if (password.value !== confirmPassword.value) {
-            event.preventDefault();
-            passwordError.textContent = "Passwords do not match!";
-            passwordError.style.display = "block";
-            confirmPassword.classList.add("is-invalid");
-        } else {
-            passwordError.style.display = "none";
+    function checkPasswordMatch() {
+        if (password.value === confirmPassword.value && password.value.length > 0) {
             confirmPassword.classList.remove("is-invalid");
+            passwordError.style.display = "none";
+            signupBtn.disabled = false;
+        } else {
+            confirmPassword.classList.add("is-invalid");
+            passwordError.style.display = "block";
+            passwordError.textContent = "Passwords do not match!";
+            signupBtn.disabled = true;
+        }
+    }
 
-            // Show spinner and disable button
-            event.preventDefault(); // Stop form submission temporarily
+    password.addEventListener("input", checkPasswordMatch);
+    confirmPassword.addEventListener("input", checkPasswordMatch);
+
+    signupForm.addEventListener("submit", function (event) {
+        event.preventDefault(); 
+
+        if (password.value === confirmPassword.value) {
             signupBtn.disabled = true;
             signupSpinner.classList.remove("d-none");
 
-            // Simulate loading (2 sec), then submit form
             setTimeout(() => {
-                signupBtn.disabled = false;
-                signupSpinner.classList.add("d-none");
-                this.submit(); // Now submit the form
-            }, 2000);
+                this.submit(); 
+            }, 500);
+        } else {
+            confirmPassword.classList.add("is-invalid");
+            passwordError.style.display = "block";
+            passwordError.textContent = "Passwords do not match!";
         }
 
         this.classList.add("was-validated");
     });
 </script>
 
-<!-- FontAwesome for Icons -->
 <script src="https://kit.fontawesome.com/your-kit-code.js" crossorigin="anonymous"></script>

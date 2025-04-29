@@ -31,10 +31,10 @@ const bookingSchema = new Schema({
         unique: true, 
         sparse: true
     }, 
-    razorpayPaymentId: { type: String },  // To store payment ID after success
+    razorpayPaymentId: { type: String },  
     status: {
         type: String,
-        enum: ["Pending", "Paid", "Cancelled", "Confirmed"], // ✅ Add "Confirmed"
+        enum: ["Pending", "Paid", "Cancelled", "Confirmed"], 
         required: true,
     }
     ,adminCommission: {

@@ -7,7 +7,6 @@
                 <div class="card-body p-4">
                     <h2 class="text-center mb-3 fw-bold text-success">User Profile</h2>
 
-                    <!-- Flash Messages for Error/Success -->
                     <% if (error.length > 0) { %>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <%= error %>
@@ -22,14 +21,12 @@
                         </div>
                     <% } %>
 
-                    <!-- Personal Details -->
                     <h4 class="text-success">Personal Details</h4>
                     <p><strong>Username:</strong> <%= user.username %></p>
                     <p><strong>Email:</strong> <%= user.email %></p>
                     <p><strong>Phone:</strong> <%= user.phone %></p>
 
                     <hr>
-                    <!-- Actions -->
                     <div class="text-center">
                         <a href="/listings" class="btn btn-secondary">Back</a>
                         <a href="/logout" class="btn btn-danger fw-bold">Logout</a>

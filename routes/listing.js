@@ -10,7 +10,6 @@ const { storage } = require("../cloudConfig.js");
 const upload = multer({ storage });
 const Listing = require("../models/listing.js");
 
-// 📌 Route: Display all listings (with search & category filter)
 router.route("/")
   .get(async (req, res) => {
     const { search, category } = req.query;
@@ -56,14 +55,12 @@ router.route("/")
         filename: file.filename,
       }));
 
-      // Capitalize category name
       if (req.body.listing.category) {
         req.body.listing.category =
           req.body.listing.category.charAt(0).toUpperCase() +
           req.body.listing.category.slice(1).toLowerCase();
       }
 
-      // ✅ Store owner as a string instead of ObjectId
       req.body.listing.owner = req.user._id.toString();
 
       next();
@@ -72,20 +69,16 @@ router.route("/")
     wrapAsync(listingController.createListing)
   );
 
-// 📌 Route: Show a single listing
 router.route("/:id")
   .get(wrapAsync(listingController.showListing));
 
-// 📌 Route: Booking a listing
 router.get("/:id/book", isLoggedIn, wrapAsync(bookingController.getBookingPage));
 router.post("/:id/book", isLoggedIn, wrapAsync(bookingController.createBooking));
 
-// 📌 Route: Payment Processing
 router.get("/:id/payment", isLoggedIn, wrapAsync(bookingController.getPaymentPage));
 router.post("/:id/payment", isLoggedIn, wrapAsync(bookingController.processPayment));
 router.post("/:id/payment/verify", isLoggedIn, wrapAsync(bookingController.verifyPayment));
 
-// Confirmation
 router.get("/:id/confirmation", isLoggedIn, wrapAsync(bookingController.getConfirmationPage));
 
 router.get("/category/:category", async (req, res) => {

@@ -2,7 +2,6 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4 text-uppercase fw-bold text-warning">Manage Listings</h2>
 
-    <!-- Search Bar -->
     <div class="row mb-3">
         <div class="col-md-6 offset-md-3">
             <input 
@@ -39,19 +38,16 @@
                             <td><%= listing.price.toLocaleString("en-IN") %></td>
                             <td><%= listing.owner ? listing.owner.username : 'Unknown' %></td>
                             <td class="text-center">
-                                <!-- View Listing -->
                                 <a href="/admin/listings/<%= listing._id %>" 
                                    class="btn btn-sm btn-info me-1">
                                     <i class="fas fa-eye"></i> View
                                 </a>
 
-                                <!-- Edit Listing -->
                                 <a href="/admin/listings/<%= listing._id %>/edit" 
                                    class="btn btn-sm btn-primary me-1">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
 
-                                <!-- Delete Listing (Confirmation) -->
                                 <a href="/admin/listings/<%= listing._id %>/delete" 
                                    class="btn btn-sm btn-danger">
                                     <i class="fas fa-trash"></i> Delete
@@ -71,7 +67,6 @@
 <br><br>
 <a href="/admin/dashboard" class="btn btn-secondary">Back</a>
 <script>
-    // Search Filter Functionality
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('keyup', function() {
         const filter = searchInput.value.toLowerCase();

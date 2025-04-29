@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Review = require("./review.js");
-const User = require("./user.js"); // Import User model to check roles
-const Host = require("./host.js"); // Import Host model
+const User = require("./user.js"); 
+const Host = require("./host.js"); 
 
 const listingSchema = new Schema(
   {
@@ -24,7 +24,7 @@ const listingSchema = new Schema(
         "resort", "camping", "cave", "container", "chalet", "room", "treehouse",
         "igloo", "other"
       ],
-      lowercase: true // Ensure valid categories
+      lowercase: true 
     },
     images: [
       {
@@ -85,13 +85,11 @@ const listingSchema = new Schema(
       type: String, 
       required: true 
     },
-    // Store booked dates
     bookedDates: [{ type: Date }]
   },
   { timestamps: true }
 );
 
-// Cascade delete associated reviews when listing is deleted
 listingSchema.post("findOneAndDelete", async (listing) => {
   if (listing && listing.reviews && listing.reviews.length) {
     await Review.deleteMany({ _id: { $in: listing.reviews } });

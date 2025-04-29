@@ -14,7 +14,7 @@ const LocalStrategy = require("passport-local");
 
 // Models
 const User = require("./models/user.js");
-const Host = require("./models/host.js");     // Added Host model
+const Host = require("./models/host.js");     
 const Admin = require("./models/admin");
 
 // Routes
@@ -57,7 +57,6 @@ app.use(express.json());
     },
   };
 
-// Session & Flash should come before routes
 app.use(session(sessionOptions));
 app.use(flash());
 
@@ -70,7 +69,7 @@ passport.use(
     { usernameField: "identifier", passwordField: "password" }, 
     async (identifier, password, done) => {
       try {
-        // Find user by either username or email
+        
         const user = await User.findOne({
           $or: [{ email: identifier }, { username: identifier }],
         });
@@ -79,13 +78,13 @@ passport.use(
           return done(null, false, { message: "Invalid username or email!" });
         }
 
-        // Authenticate Password
+        
         const isValid = await user.authenticate(password);
         if (!isValid.user) {
           return done(null, false, { message: "Incorrect password!" });
         }
 
-        return done(null, user); // Successfully authenticated
+        return done(null, user); 
       } catch (err) {
         return done(err);
       }
@@ -107,13 +106,12 @@ passport.use(
           return done(null, false, { message: "Invalid username or email!" });
         }
 
-        // Authenticate Password using Admin model
         const { user: authenticatedAdmin, error } = await admin.authenticate(password);
         if (error || !authenticatedAdmin) {
           return done(null, false, { message: "Incorrect password!" });
         }
 
-        return done(null, authenticatedAdmin); // Successfully authenticated
+        return done(null, authenticatedAdmin); 
       } catch (err) {
         return done(err);
       }
@@ -127,7 +125,7 @@ passport.use(
     { usernameField: "identifier", passwordField: "password" }, 
     async (identifier, password, done) => {
       try {
-        // Find user by either username or email
+        
         const host = await Host.findOne({
           $or: [{ email: identifier }, { username: identifier }],
         });
@@ -136,13 +134,12 @@ passport.use(
           return done(null, false, { message: "Invalid username or email!" });
         }
 
-        // Authenticate Password
         const isValid = await host.authenticate(password);
         if (!isValid.user) {
           return done(null, false, { message: "Incorrect password!" });
         }
 
-        return done(null, host); // Successfully authenticated
+        return done(null, host); 
       } catch (err) {
         return done(err);
       }
@@ -170,23 +167,20 @@ passport.deserializeUser(async (data, done) => {
 
     if (!user) return done(null, false);
 
-    user.role = data.role; // Reattach role
+    user.role = data.role; 
     return done(null, user);
   } catch (err) {
     return done(err);
   }
 });
 
-// Flash Messages & Current User in Views
 app.use((req, res, next) => {
-  // res.locals.messages = req.flash();
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
   next();
 });
 
-// Set search value before any routes
 app.use((req, res, next) => {
   res.locals.search = req.query.search || '';
   next();
@@ -199,9 +193,8 @@ app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/admin", adminRoutes);
 app.use("/host", hostRoutes);
-app.use('/bookings', bookingRoutes); // so POST /bookings/cleanup works
+app.use('/bookings', bookingRoutes); 
 
-// Error Handling
 app.all("*", (req, res) => {
   res.status(404).render("error/404");
 });
@@ -211,7 +204,6 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render('listings/error.ejs', { message });
 });
 
-// Start Server
 app.listen(3030, () => {
   console.log("Server is listening on port 3030");
 });
