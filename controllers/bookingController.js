@@ -22,7 +22,6 @@ module.exports.getBookingPage = async (req, res) => {
     res.render("bookings/book", { listing, currUser: req.user });
 };
 
-// Create Booking (Temporary Data)
 module.exports.createBooking = async (req, res) => {
     const { id } = req.params;
     const { checkInDate, checkOutDate } = req.body;
@@ -46,18 +45,16 @@ module.exports.createBooking = async (req, res) => {
         return res.redirect(`/listings/${id}/book`);
     }
 
-    // Generate all selected dates: check-in to the day before check-out
     const selectedDates = [];
     let current = new Date(checkIn);
     const lastNight = new Date(checkOut);
-    lastNight.setDate(lastNight.getDate() - 1); // exclude check-out day
+    lastNight.setDate(lastNight.getDate() - 1); 
 
     while (current <= lastNight) {
         selectedDates.push(new Date(current).toISOString().split("T")[0]);
         current.setDate(current.getDate() + 1);
     }
 
-    // Get all booked dates (both Paid and Pending) from existing bookings
 const existingBookings = await Booking.find({
     property: listing._id,
     status: { $in: ["Paid", "Pending"] }
@@ -71,22 +68,16 @@ existingBookings.forEach(booking => {
     allBookedDates.push(...formatted);
 });
 
-// Check for overlap with selected dates
 const overlap = selectedDates.some(date => allBookedDates.includes(date));
 if (overlap) {
     req.flash("error", "One or more of your selected dates have already been booked.");
     return res.redirect(`/listings/${id}/book`);
 }
-
-
-    // Proceed to payment — ✅ DON'T CHANGE THIS
     res.redirect(
         `/listings/${id}/payment?dates=${selectedDates.join(",")}&checkout=${checkOutDate}&listingId=${listing._id}`
     );
 };
 
-
-// Get Payment Page (No data saved in DB yet)
 module.exports.getPaymentPage = async (req, res) => {
     const { id } = req.params;
     const { dates, listingId, checkout } = req.query;
@@ -104,16 +95,14 @@ module.exports.getPaymentPage = async (req, res) => {
         }
 
         const selectedDates = dates.split(",");
-        const checkInDate = selectedDates[0]; // From query string
+        const checkInDate = selectedDates[0]; 
         const checkOutDate = checkout;
 
         const totalNights = (new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24);
         const totalPrice = totalNights * listing.price;
 
-        // Optional: admin commission (not shown to frontend)
         const adminCommission = Math.round(totalPrice * 0.10);
 
-        // Store session data for final booking creation
         req.session.bookingDetails = {
             listingId,
             checkInDate,
@@ -135,7 +124,7 @@ module.exports.getPaymentPage = async (req, res) => {
         });
 
     } catch (err) {
-        console.error("💥 Error in getPaymentPage:", err);
+        console.error(" Error in getPaymentPage:", err);
         req.flash("error", "Something went wrong.");
         return res.redirect(`/listings/${id}/book`);
     }
@@ -143,37 +132,35 @@ module.exports.getPaymentPage = async (req, res) => {
 
 module.exports.processPayment = async (req, res) => {
     try {
-        console.log("📢 Full Received Request Body:", req.body);
+        console.log(" Full Received Request Body:", req.body);
 
         const listingId = req.params.id;
-        const bookingDates = req.body.bookingDates; // comma-separated date strings
-
-        console.log("📢 Received bookingDates:", bookingDates, "Listing ID:", listingId);
+        const bookingDates = req.body.bookingDates; 
+        console.log(" Received bookingDates:", bookingDates, "Listing ID:", listingId);
 
         if (!bookingDates || !listingId || typeof bookingDates !== "string") {
-            console.log("❌ Error: Missing bookingDates or listingId");
+            console.log("Error: Missing bookingDates or listingId");
             return res.status(400).json({ success: false, message: "Invalid payment request." });
         }
 
         const listing = await Listing.findById(listingId).populate({ path: "owner", model: "Host" });
         if (!listing) {
-            console.log(`❌ Error: Listing not found for ID: ${listingId}`);
+            console.log(`Error: Listing not found for ID: ${listingId}`);
             return res.status(404).json({ success: false, message: "Listing not found." });
         }
 
         if (!listing.price) {
-            console.log("❌ Error: Listing price is missing.");
+            console.log("Error: Listing price is missing.");
             return res.status(400).json({ success: false, message: "Invalid listing price." });
         }
 
         const selectedDates = bookingDates.split(",").map(date => date.trim());
         const checkInDate = selectedDates[0];
-        const checkOutDate = selectedDates[selectedDates.length]; // exclusive date
+        const checkOutDate = selectedDates[selectedDates.length]; 
 
-        // Compute total nights
         const totalNights = selectedDates.length;
         if (totalNights < 1) {
-            console.log("❌ Error: Invalid booking duration.");
+            console.log("Error: Invalid booking duration.");
             return res.status(400).json({ success: false, message: "Invalid booking duration." });
         }
 
@@ -183,12 +170,12 @@ module.exports.processPayment = async (req, res) => {
         console.log("🔎 Razorpay Key Secret:", process.env.RAZORPAY_KEY_SECRET);
 
         if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-            console.log("❌ Error: Razorpay API keys missing.");
+            console.log("Error: Razorpay API keys missing.");
             return res.status(500).json({ success: false, message: "Payment service unavailable." });
         }
 
         const orderOptions = {
-            amount: totalPrice * 100, // Convert to paise
+            amount: totalPrice * 100, 
             currency: "INR",
             receipt: `order_${new Date().getTime()}`,
             payment_capture: 1,
@@ -198,7 +185,7 @@ module.exports.processPayment = async (req, res) => {
 
         try {
             const razorpayOrder = await razorpay.orders.create(orderOptions);
-            console.log("✅ Razorpay Order Created:", razorpayOrder);
+            console.log("Razorpay Order Created:", razorpayOrder);
 
             const commissionRate = 0.10;
             const adminCommission = totalPrice * commissionRate;
@@ -229,12 +216,12 @@ module.exports.processPayment = async (req, res) => {
             });
 
         } catch (razorpayError) {
-            console.error("❌ Razorpay Error:", razorpayError);
+            console.error("Razorpay Error:", razorpayError);
             return res.status(500).json({ success: false, message: "Payment processing failed." });
         }
 
     } catch (err) {
-        console.error("❌ Error processing payment:", err.message);
+        console.error("Error processing payment:", err.message);
         return res.status(500).json({ success: false, message: err.message });
     }
 };
@@ -243,62 +230,56 @@ module.exports.verifyPayment = async (req, res) => {
     try {
         const { paymentId, orderId, signature } = req.body;
 
-        // Step 1: Find booking
         const booking = await Booking.findOne({ orderId });
 
         if (!booking) {
-            console.error("❌ No booking found for orderId:", orderId);
+            console.error(" No booking found for orderId:", orderId);
             return res.status(400).json({ success: false, message: "Invalid booking." });
         }
 
-        console.log("✅ Booking found:", booking._id, "Status:", booking.status);
+        console.log("Booking found:", booking._id, "Status:", booking.status);
 
-        // Step 2: Ensure it's still pending
         if (booking.status !== "Pending") {
             console.warn("⚠️ Booking already processed:", booking.status);
             return res.status(400).json({ success: false, message: "Booking is not in a payable state." });
         }
 
-        // Step 3: Get listing
         const listing = await Listing.findById(booking.property);
         if (!listing) {
-            console.error("❌ Listing not found for property ID:", booking.property);
+            console.error("Listing not found for property ID:", booking.property);
             return res.status(400).json({ success: false, message: "Listing not found." });
         }
 
-        // Step 4: Check for duplicate dates (using getTime for date comparison)
-        const confirmedBookedDates = booking.bookedDates.slice(0, -1); // exclude checkout date
+        const confirmedBookedDates = booking.bookedDates.slice(0, -1);
         const alreadyBooked = confirmedBookedDates.some(date =>
             listing.bookedDates.some(booked => new Date(booked).getTime() === new Date(date).getTime())
         );
 
         if (alreadyBooked) {
-            console.warn("❌ Duplicate dates found! Deleting booking:", booking._id);
+            console.warn("Duplicate dates found! Deleting booking:", booking._id);
             await Booking.deleteOne({ _id: booking._id });
             return res.status(400).json({ success: false, message: "Dates already booked. Booking deleted." });
         }
 
-        // Step 5: Save dates to listing
         listing.bookedDates = Array.from(new Set([
             ...listing.bookedDates.map(d => new Date(d).toISOString()),
             ...confirmedBookedDates.map(d => new Date(d).toISOString())
         ]));
         await listing.save();
 
-        // Step 6: Update booking
         booking.razorpayPaymentId = paymentId;
         booking.status = "Paid";
         await booking.save();
 
-        console.log(`✅ Booking confirmed and paid: ${booking._id}`);
+        console.log(`Booking confirmed and paid: ${booking._id}`);
         return res.json({ success: true, bookingId: booking._id });
 
     } catch (error) {
-        console.error("❌ verifyPayment error:", error);
+        console.error("verifyPayment error:", error);
         return res.status(500).json({ success: false, message: "Internal server error." });
     }
 };
-const { sendBookingConfirmationEmail } = require('../services/emailService');  // Import the email service
+const { sendBookingConfirmationEmail } = require('../services/emailService');  
 
 module.exports.getConfirmationPage = async (req, res) => {
   const { bookingId } = req.query;
@@ -318,9 +299,8 @@ module.exports.getConfirmationPage = async (req, res) => {
     return res.redirect("/listings");
   }
 
-  console.log(`📢 Booking ${bookingId} details loaded.`);
+  console.log(`Booking ${bookingId} details loaded.`);
 
-  // Send booking confirmation email to the guest
   try {
     await sendBookingConfirmationEmail(booking.guest.email, booking);
     console.log('Booking confirmation email sent.');
