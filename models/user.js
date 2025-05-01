@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const passportLocalMongoose = require("passport-local-mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new Schema({
     username: {
         type: String,
         required: true,
         unique: true,
-        minlength: [5, "username must be at least 5."]
+        minlength: [5, "Username must be at least 5 characters."]
     },
     email: {
         type: String,
@@ -15,13 +16,24 @@ const userSchema = new Schema({
         unique: true,
         lowercase: true,
         trim: true,
-        match: [/.+\@.+\..+/, "Invalid email format"]
+        match: [/.+\@.+\..+/, "Invalid email format."]
     },
-    phone: { type: String, required: true ,unique:true,minlength: [10, "phone must be at least 10."]},
+    phone: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: [10, "Phone number must be at least 10 digits."]
+    },
     role: {
         type: String,
         enum: ["user", "host", "admin"],
         default: "user"
+    },
+    otp: {
+        type: String, 
+    },
+    otpExpires: {
+        type: Date, 
     }
 }, { timestamps: true });
 
@@ -38,5 +50,3 @@ userSchema.plugin(passportLocalMongoose, {
 });
 
 module.exports = mongoose.model("User", userSchema);
-
-

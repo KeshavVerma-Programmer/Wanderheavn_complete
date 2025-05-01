@@ -8,6 +8,7 @@
                     <h2 class="text-center mb-4 fw-bold text-primary">Host Login</h2>
 
                     <form action="/host/login" method="post" class="needs-validation" novalidate>
+                        <!-- Identifier Field (Username or Email) -->
                         <div class="mb-3">
                             <label for="identifier" class="form-label">Username or Email</label>
                             <input 
@@ -20,6 +21,7 @@
                             />
                         </div>
                     
+                        <!-- Password Field -->
                         <div class="mb-3 position-relative">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
@@ -36,7 +38,13 @@
                                 </span>
                             </div>
                         </div>
-                    
+                    <!-- forgot forgot-password -->
+                    <div class="text-end mb-3">
+                        <a href="/host/forgot-password" class="text-decoration-none small text-primary fw-bold">
+                            Forgot Password?
+                        </a>
+                    </div>
+                        <!-- Login Button -->
                         <button id="loginBtn" class="btn btn-primary w-100 fw-bold" type="submit">
                             Login as Host
                             <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
@@ -44,6 +52,7 @@
                     </form>
                     
 
+                    <!-- Additional Links -->
                     <div class="text-center mt-3">
                         <p>Don't have an account? <a href="/host/signup" class="text-primary fw-bold">Sign up as Host</a></p>
                         <p>Want to log in as a user? <a href="/user/login" class="text-primary fw-bold">Login as User</a></p>

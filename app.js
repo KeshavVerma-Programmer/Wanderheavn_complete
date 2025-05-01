@@ -16,6 +16,7 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const Host = require("./models/host.js");     
 const Admin = require("./models/admin");
+const Help=require("./models/help.js");
 
 // Routes
 const listingRouter = require("./routes/listing.js");
@@ -25,6 +26,7 @@ const adminRoutes = require("./routes/admin");
 const hostRoutes = require("./routes/host");
 const bookingRoutes = require('./routes/booking.js');
 const staticRoutes = require('./routes/static');
+const indexRouter = require('./routes/index')
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderheavn";
 
@@ -194,6 +196,7 @@ app.use("/listings/:id/reviews", reviewRouter);
 app.use("/admin", adminRoutes);
 app.use("/host", hostRoutes);
 app.use('/bookings', bookingRoutes); 
+app.use('/', indexRouter);
 
 app.all("*", (req, res) => {
   res.status(404).render("error/404");

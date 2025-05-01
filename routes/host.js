@@ -16,7 +16,7 @@ const {
     manageBookings,
     approveBooking,
     rejectBooking,
-    logout,renderEditForm,updateListing,destroyListing,deleteReviewAsHost,renderHostAnalytics,viewListing
+    logout,renderEditForm,updateListing,destroyListing,deleteReviewAsHost,renderHostAnalytics,viewListing,forgotPassword,showVerifyOtpForm,resetPassword,verifyOtp
 } = require("../controllers/hosts");
 const multer = require("multer");
 const { storage } = require("../cloudConfig");
@@ -84,4 +84,21 @@ router.delete("/listings/:listingId/reviews/:reviewId", isLoggedIn, isHostOrAdmi
 router.get("/analytics", isHost, wrapAsync(renderHostAnalytics));
 
 router.get("/listings/:id", isHost, viewListing);
+
+// Step 1: Show Forgot Password Form
+router.get('/forgot-password', (req, res) => {
+    res.render('hosts/forgot-password'); // EJS view for host forgot password
+});
+router.post('/forgot-password', forgotPassword);
+
+// Step 2: Show OTP Verification Form
+router.get('/verify-otp', showVerifyOtpForm);
+router.post('/verify-otp', verifyOtp);
+
+// Step 3: Show Reset Password Form
+router.get('/reset-password/:hostId', (req, res) => {
+    res.render('hosts/reset-password', { hostId: req.params.hostId });
+});
+router.post('/reset-password', resetPassword);
+
 module.exports = router;

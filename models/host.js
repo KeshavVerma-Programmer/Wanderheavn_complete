@@ -5,10 +5,28 @@ const User = require("../models/user");
 const {required} = require("joi");
 
 const hostSchema = new Schema({
-    username: { type: String, required: true, unique: true, minlength: [5, "username must be at least 5."]},
-    email: { type: String, required: true, unique: true ,match: [/.+\@.+\..+/, "Invalid email format"]},
-    phone: { type: String, required: true, unique: true, minlength: [10, "phone numner must be at least 10."]},
-    role: { type: String, default: "host" },
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: [5, "Username must be at least 5 characters."]
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/.+\@.+\..+/, "Invalid email format"]
+    },
+    phone: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: [10, "Phone number must be at least 10 digits."]
+    },
+    role: {
+        type: String,
+        default: "host"
+    },
     userId: {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -21,7 +39,10 @@ const hostSchema = new Schema({
         }
     ],
     earnings: {
-        totalEarnings: { type: Number, default: 0 },
+        totalEarnings: {
+            type: Number,
+            default: 0
+        },
         payoutHistory: [
             {
                 amount: { type: Number, required: true },
@@ -34,11 +55,17 @@ const hostSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "Review"
         }
-    ]
+    ],
+    otp: {
+        type: Number
+    },
+    otpExpires: {
+        type: Date
+    }
 }, { timestamps: true });
 
 hostSchema.plugin(passportLocalMongoose, {
-    passwordValidator: function(password, cb) {
+    passwordValidator: function (password, cb) {
         if (password.length < 6) {
             return cb("Password must be at least 6 characters long.");
         }

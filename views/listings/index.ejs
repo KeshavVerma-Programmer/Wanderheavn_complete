@@ -1,21 +1,20 @@
-<% layout("/layouts/boilerplate") %> 
+<% layout("/layouts/boilerplate") %>
 
 <style>
-    
   body {
-      opacity: 0;
-      animation: fadeIn 0.8s ease-in-out forwards;
+    opacity: 0;
+    animation: fadeIn 0.8s ease-in-out forwards;
   }
 
   @keyframes fadeIn {
-      from {
-          opacity: 0;
-          transform: translateY(-10px);
-      }
-      to {
-          opacity: 1;
-          transform: translateY(0);
-      }
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   #filter-container {
@@ -47,28 +46,48 @@
   }
 
   .filter i {
-    font-size: 18px; 
-  }
-  
+    font-size: 18px;
+  }form .form-control,
+form .form-select {
+  font-size: 0.95rem;
+  padding: 0.6rem 0.75rem;
+  box-shadow: none;
+  transition: all 0.2s ease-in-out;
+}
+
+form .form-control:focus,
+form .form-select:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 0.15rem rgba(108, 99, 255, 0.2);
+}
+
+.btn-primary {
+  background-color: #6c63ff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #5a52e5;
+}
+
 </style>
 
 <div id="filter-container">
   <div id="filters">
     <% const filters = [
-  { icon: "fa-building", label: "Apartment" },
-  { icon: "fa-house-chimney", label: "Villa" },
-  { icon: "fa-house", label: "Cabin" },
-  { icon: "fa-home", label: "Bungalow" },
-  { icon: "fa-umbrella-beach", label: "Resort" },
-  { icon: "fa-campground", label: "Camping" },
-  { icon: "fa-box", label: "Container" },
-  { icon: "fa-mountain", label: "Cave" },
-  { icon: "fa-bed", label: "Room" },
-  { icon: "fa-tree", label: "Treehouse" },
-  { icon: "fa-igloo", label: "Igloo" },
-  { icon: "fa-fire", label: "Chalet" }
-  ]; %>
-  
+      { icon: "fa-building", label: "Apartment" },
+      { icon: "fa-house-chimney", label: "Villa" },
+      { icon: "fa-house", label: "Cabin" },
+      { icon: "fa-home", label: "Bungalow" },
+      { icon: "fa-umbrella-beach", label: "Resort" },
+      { icon: "fa-campground", label: "Camping" },
+      { icon: "fa-box", label: "Container" },
+      { icon: "fa-mountain", label: "Cave" },
+      { icon: "fa-bed", label: "Room" },
+      { icon: "fa-tree", label: "Treehouse" },
+      { icon: "fa-igloo", label: "Igloo" },
+      { icon: "fa-fire", label: "Chalet" }
+    ]; %>
     <% filters.forEach(filter => { %>
       <a href="/listings?category=<%= filter.label.toLowerCase() %>" class="filter text-black">
         <i class="fa-solid <%= filter.icon %>"></i>
@@ -82,29 +101,186 @@
   <% if (allListings.length === 0) { %>
     <p class="text-center">No listings found.</p>
   <% } %>
-  <% for(let listing of allListings) { %>
+  <% allListings.forEach(listing => { %>
     <div class="card col listing-card">
       <a href="/listings/<%= listing._id %>" class="listing-link">
         <img src="<%= listing.images.length ? listing.images[0].url : '/images/default.jpg' %>" 
-        class="card-img-top" 
-        alt="listing_image" 
-        style="height: 20rem;">
+             class="card-img-top" 
+             alt="listing_image" 
+             style="height: 20rem;">
         <div class="card-img-overlay"></div>
         <div class="card-body">
-          <p class="card-text"><b><%= listing.title %></b><br>
+          <p class="card-text">
+            <b><%= listing.title %></b><br>
             &#8377;<%= listing.price.toLocaleString("en-IN") %> /night
           </p>
         </div>
       </a>
     </div>
-  <% } %>
-</div> 
+  <% }); %>
+</div>
+
+<section class="container my-5">
+  <div class="row g-4 text-center">
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 rounded-4 h-100 p-3 bg-light">
+        <i class="fa-solid fa-globe fa-2x mb-2 text-primary"></i>
+        <h6 class="fw-semibold">Global Stays</h6>
+        <p class="small text-muted">Discover unique homes in over 190+ countries.</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 rounded-4 h-100 p-3 bg-light">
+        <i class="fa-solid fa-shield-halved fa-2x mb-2 text-success"></i>
+        <h6 class="fw-semibold">Secure Payments</h6>
+        <p class="small text-muted">Fast & encrypted transactions for peace of mind.</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 rounded-4 h-100 p-3 bg-light">
+        <i class="fa-solid fa-headset fa-2x mb-2 text-warning"></i>
+        <h6 class="fw-semibold">24/7 Support</h6>
+        <p class="small text-muted">Need help anytime? We're here for you.</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 rounded-4 h-100 p-3 bg-light">
+        <i class="fa-solid fa-thumbs-up fa-2x mb-2 text-danger"></i>
+        <h6 class="fw-semibold">Trusted by Millions</h6>
+        <p class="small text-muted">Top-rated by thousands of satisfied travelers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="help-section" class="py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold display-6">Need Help? Contact Us</h2>
+      <p class="text-muted">We're here to support you. Reach out anytime.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+          <div class="card-body p-0">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6823.769561036258!2d75.74567974306292!3d31.22392139740397!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391af51a4518cc07%3A0x2a817fcaa73bc6c5!2sMansa%20Devi%20Nagar%2C%20Phagwara%2C%20Punjab%20144402!5e0!3m2!1sen!2sin!4v1745998887237!5m2!1sen!2sin" 
+              width="100%" height="370" style="border:0; border-radius: 1rem 1rem 0 0;" allowfullscreen loading="lazy">
+            </iframe>
+            <div class="p-3">
+              <h5 class="fw-semibold">Wanderheavn HQ</h5>
+              <p class="mb-1 text-muted small">Mansa Devi Nagar, Phagwara, Punjab 144402</p>
+              <p class="text-muted small">🕒 Support Hours: 10 AM – 6 PM (Mon–Sat)</p>
+              <a href="https://www.google.com/maps/dir/?api=1&destination=31.2239,75.7456" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill">
+                Get Directions
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+          <h5 class="mb-3 fw-semibold">Send Us a Message</h5>
+          <form action="/help/submit" method="POST" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <label for="name" class="form-label small fw-medium">Your Name</label>
+              <input type="text" name="name" class="form-control rounded-3" placeholder="John Doe" required>
+              <div class="invalid-feedback">Please enter your name.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label small fw-medium">Email Address</label>
+              <input type="email" name="email" class="form-control rounded-3" placeholder="john@example.com" required>
+              <div class="invalid-feedback">Please enter a valid email.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="type" class="form-label small fw-medium">Query Type</label>
+              <select name="type" class="form-select rounded-3" required>
+                <option selected disabled value="">Choose an option</option>
+                <option>Feedback</option>
+                <option>Bug Report</option>
+                <option>Booking Issue</option>
+                <option>Host Support</option>
+                <option>General Inquiry</option>
+              </select>
+              <div class="invalid-feedback">Please select a query type.</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="message" class="form-label small fw-medium">Your Message</label>
+              <textarea name="message" rows="4" class="form-control rounded-3" placeholder="Write your message..." required></textarea>
+              <div class="invalid-feedback">Message is required.</div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary rounded-3 fw-semibold">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  (() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
 
 <script>
-  
   document.addEventListener("DOMContentLoaded", () => {
     document.body.style.opacity = "1";
     document.body.style.transition = "opacity 0.8s ease-in-out";
-});
-  
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector(".needs-validation");
+    const inputs = form.querySelectorAll("input, textarea, select");
+
+    inputs.forEach(input => {
+      input.addEventListener("input", () => {
+        if (input.checkValidity()) {
+          input.classList.remove("is-invalid");
+          input.classList.add("is-valid");
+        } else {
+          input.classList.remove("is-valid");
+          input.classList.add("is-invalid");
+        }
+      });
+
+      if (input.tagName === "SELECT") {
+        input.addEventListener("change", () => {
+          if (input.checkValidity()) {
+            input.classList.remove("is-invalid");
+            input.classList.add("is-valid");
+          } else {
+            input.classList.remove("is-valid");
+            input.classList.add("is-invalid");
+          }
+        });
+      }
+    });
+
+    form.addEventListener("submit", function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add("was-validated");
+    });
+  });
 </script>

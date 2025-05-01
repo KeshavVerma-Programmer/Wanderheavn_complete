@@ -7,14 +7,6 @@
                 <div class="card-body p-4">
                     <h2 class="text-center mb-4 fw-bold text-success">User Login</h2>
 
-
-                    <% if (success.length > 0) { %>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <%= success %>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <% } %>
-
                     <form action="/user/login" method="post" class="needs-validation" novalidate>
                         <div class="mb-3">
                             <label for="identifier" class="form-label">Username or Email</label>
@@ -44,7 +36,11 @@
                                 </span>
                             </div>
                         </div>
-                    
+                        <div class="text-end mb-3">
+                            <a href="/users/forgot-password" class="text-decoration-none small text-primary fw-bold">
+                                Forgot Password?
+                            </a>
+                        </div>
                         <button id="loginBtn" class="btn btn-success w-100 fw-bold" type="submit">
                             Login as User
                             <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"></span>
