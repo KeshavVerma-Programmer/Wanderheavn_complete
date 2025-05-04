@@ -1,5 +1,4 @@
 <% layout("/layouts/boilerplate") %>
-
 <style>
   body {
     opacity: 0;
@@ -69,7 +68,27 @@ form .form-select:focus {
 .btn-primary:hover {
   background-color: #5a52e5;
 }
+#scrollToTopBtn {
+  position: fixed;
+  bottom: 90px;
+  right: 30px;
+  z-index: 1000;
+  display: none;
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 0.75rem 1rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
 
+#scrollToTopBtn:hover {
+  background-color: #5a52e5;
+  transform: translateY(-2px);
+}
 </style>
 
 <div id="filter-container">
@@ -120,13 +139,17 @@ form .form-select:focus {
   <% }); %>
 </div>
 
+<button id="scrollToTopBtn" title="Go to top">
+  <i class="fa-solid fa-arrow-up"></i>
+</button>
+
 <section class="container my-5">
   <div class="row g-4 text-center">
     <div class="col-md-3">
       <div class="card shadow-sm border-0 rounded-4 h-100 p-3 bg-light">
         <i class="fa-solid fa-globe fa-2x mb-2 text-primary"></i>
         <h6 class="fw-semibold">Global Stays</h6>
-        <p class="small text-muted">Discover unique homes in over 190+ countries.</p>
+        <p class="small text-muted">Discover unique homes in india.</p>
       </div>
     </div>
     <div class="col-md-3">
@@ -146,8 +169,8 @@ form .form-select:focus {
     <div class="col-md-3">
       <div class="card shadow-sm border-0 rounded-4 h-100 p-3 bg-light">
         <i class="fa-solid fa-thumbs-up fa-2x mb-2 text-danger"></i>
-        <h6 class="fw-semibold">Trusted by Millions</h6>
-        <p class="small text-muted">Top-rated by thousands of satisfied travelers.</p>
+        <h6 class="fw-semibold">Trusted </h6>
+        <p class="small text-muted">thousands of satisfied travelers.</p>
       </div>
     </div>
   </div>
@@ -170,7 +193,7 @@ form .form-select:focus {
             </iframe>
             <div class="p-3">
               <h5 class="fw-semibold">Wanderheavn HQ</h5>
-              <p class="mb-1 text-muted small">Mansa Devi Nagar, Phagwara, Punjab 144402</p>
+              <p class="mb-1 text-muted small">Mansa Devi Nagar, Phagwara, Punjab 144401</p>
               <p class="text-muted small">🕒 Support Hours: 10 AM – 6 PM (Mon–Sat)</p>
               <a href="https://www.google.com/maps/dir/?api=1&destination=31.2239,75.7456" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill">
                 Get Directions
@@ -216,13 +239,15 @@ form .form-select:focus {
             </div>
 
             <div class="d-grid">
-              <button type="submit" class="btn btn-primary rounded-3 fw-semibold">Send Message</button>
+              <button type="submit" class="btn btn-primary rounded-3 fw-semibold" disabled>Send Message</button>
             </div>
           </form>
         </div>
       </div>
     </div>
+    
   </div>
+  
 </section>
 <script>
   (() => {
@@ -250,30 +275,33 @@ form .form-select:focus {
   document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector(".needs-validation");
     const inputs = form.querySelectorAll("input, textarea, select");
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    function validateForm() {
+      if (form.checkValidity()) {
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+      }
+    }
 
     inputs.forEach(input => {
       input.addEventListener("input", () => {
-        if (input.checkValidity()) {
-          input.classList.remove("is-invalid");
-          input.classList.add("is-valid");
-        } else {
-          input.classList.remove("is-valid");
-          input.classList.add("is-invalid");
-        }
+        input.classList.toggle("is-valid", input.checkValidity());
+        input.classList.toggle("is-invalid", !input.checkValidity());
+        validateForm();
       });
 
       if (input.tagName === "SELECT") {
         input.addEventListener("change", () => {
-          if (input.checkValidity()) {
-            input.classList.remove("is-invalid");
-            input.classList.add("is-valid");
-          } else {
-            input.classList.remove("is-valid");
-            input.classList.add("is-invalid");
-          }
+          input.classList.toggle("is-valid", input.checkValidity());
+          input.classList.toggle("is-invalid", !input.checkValidity());
+          validateForm();
         });
       }
     });
+
+    submitBtn.disabled = true;
 
     form.addEventListener("submit", function (event) {
       if (!form.checkValidity()) {
@@ -283,4 +311,23 @@ form .form-select:focus {
       form.classList.add("was-validated");
     });
   });
+  document.addEventListener("DOMContentLoaded", () => {
+  const scrollBtn = document.getElementById("scrollToTopBtn");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      scrollBtn.style.display = "block";
+    } else {
+      scrollBtn.style.display = "none";
+    }
+  });
+
+  scrollBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+});
+
 </script>

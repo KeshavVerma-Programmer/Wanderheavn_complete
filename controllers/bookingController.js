@@ -279,7 +279,8 @@ module.exports.verifyPayment = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error." });
     }
 };
-const { sendBookingConfirmationEmail } = require('../services/emailService');  
+const { sendBookingConfirmationEmail } = require('../services/emailService'); 
+const { sendHostEarningEmail } = require('../services/sendHostEarningEmail');    
 
 module.exports.getConfirmationPage = async (req, res) => {
   const { bookingId } = req.query;
@@ -290,22 +291,37 @@ module.exports.getConfirmationPage = async (req, res) => {
   }
 
   const booking = await Booking.findById(bookingId)
-    .populate({ path: "host", select: "username email" })
     .populate({ path: "guest", select: "username email" })
-    .populate("property");
+    .populate({
+      path: "property",
+      populate: { path: "owner", select: "username email" } 
+    });
 
   if (!booking) {
     req.flash("error", "Booking not found.");
     return res.redirect("/listings");
   }
 
-  console.log(`Booking ${bookingId} details loaded.`);
+  console.log( `Booking ${bookingId} details loaded.`);
 
   try {
-    await sendBookingConfirmationEmail(booking.guest.email, booking);
-    console.log('Booking confirmation email sent.');
+    if (booking.guest?.email) {
+      await sendBookingConfirmationEmail(booking.guest.email, booking);
+      console.log(' Booking confirmation email sent to guest.');
+    } else {
+      console.warn(" Guest email not available. Skipping guest email.");
+    }
+
+    const hostEmail = booking.property?.owner?.email;
+    if (hostEmail) {
+      await sendHostEarningEmail(hostEmail, booking);
+      console.log('Host earning email sent.');
+    } else {
+      console.warn(" Host email not available. Skipping host email.");
+    }
+
   } catch (error) {
-    console.error('Failed to send booking confirmation email:', error);
+    console.error(' Failed to send booking emails:', error);
   }
 
   res.render("bookings/confirmation", { booking, currUser: req.user });
